@@ -1,0 +1,12 @@
+python3
+python3-pip
+python3-dev
+curl
+wget
+git
+nodejs
+npm
+xterm
+firefox-esr
+build-essential
+libssl-dev
