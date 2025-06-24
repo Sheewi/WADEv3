@@ -39,7 +39,12 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install black isort flake8 pytest pytest-cov
-          pip install -r requirements.txt || echo "Some dependencies may not be available, continuing with available packages"
+          # Try to install all dependencies, fallback to essential ones if needed
+          pip install -r requirements.txt || {
+            echo "Full requirements installation failed, installing essential packages..."
+            pip install flask fastapi pydantic cryptography psutil pytest pytest-cov
+            pip install crewai>=0.130.0 || pip install crewai>=0.28.8 || echo "CrewAI installation failed, continuing without it"
+          }
 
       - name: Run code formatting checks
         run: |
@@ -85,7 +90,12 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install pytest pytest-cov pytest-xdist pytest-mock
-          pip install -r requirements.txt || echo "Some dependencies may not be available, continuing with available packages"
+          # Try to install all dependencies, fallback to essential ones if needed
+          pip install -r requirements.txt || {
+            echo "Full requirements installation failed, installing essential packages..."
+            pip install flask fastapi pydantic cryptography psutil pytest pytest-cov pytest-xdist pytest-mock
+            pip install crewai>=0.130.0 || pip install crewai>=0.28.8 || echo "CrewAI installation failed, continuing without it"
+          }
 
       - name: Run unit tests
         run: |
@@ -156,7 +166,12 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install pytest pytest-cov
-          pip install -r requirements.txt || echo "Some dependencies may not be available, continuing with available packages"
+          # Try to install all dependencies, fallback to essential ones if needed
+          pip install -r requirements.txt || {
+            echo "Full requirements installation failed, installing essential packages..."
+            pip install flask fastapi pydantic cryptography psutil pytest pytest-cov
+            pip install crewai>=0.130.0 || pip install crewai>=0.28.8 || echo "CrewAI installation failed, continuing without it"
+          }
 
       - name: Run integration tests
         env:
