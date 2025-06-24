@@ -1,0 +1,778 @@
+#!/bin/bash
+# Hook to install Wade with Crew AI in Kali Linux
+
+set -e
+
+echo "Installing Wade with Crew AI - Multi-agent system for Kali Linux"
+
+# Create directories
+mkdir -p /opt/wade
+mkdir -p /etc/skel/.wade/{models,logs,config,tools,agents,core,interface}
+
+# Install dependencies
+apt-get update
+apt-get install -y python3 python3-pip curl wget git nodejs npm xterm
+
+# Install Python dependencies
+pip3 install flask flask-cors requests websockets crewai langchain langchain-community
+
+# Download and install Ollama
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Create the Crew AI integration script
+cat > /etc/skel/.wade/core/crew_ai_integration.py << 'EOF'
+#!/usr/bin/env python3
+"""
+Crew AI Integration for Wade - Multi-agent system for Kali Linux
+This demonstrates how to integrate Crew AI with the Phind model in Wade
+"""
+
+import os
+import json
+import asyncio
+from typing import List, Dict, Any, Optional
+from crewai import Agent, Task, Crew, Process
+from langchain.tools import Tool
+from langchain.agents import load_tools
+from langchain.llms import Ollama
+
+# Configure Ollama LLM
+llm = Ollama(model="phind-codellama")
+
+# Define specialized agents
+
+class WadeAgentSystem:
+    """Wade multi-agent system using Crew AI framework"""
+    
+    def __init__(self):
+        """Initialize the Wade agent system"""
+        self.llm = llm
+        self.agents = self._create_agents()
+        self.tools = self._create_tools()
+        self.crew = self._create_crew()
+        
+    def _create_agents(self) -> Dict[str, Agent]:
+        """Create specialized agents for different tasks"""
+        
+        # Hacking specialist agent
+        hacker = Agent(
+            role="Offensive Security Specialist",
+            goal="Find and exploit vulnerabilities in target systems",
+            backstory="You are an elite ethical hacker with expertise in penetration testing and vulnerability assessment. You help identify security weaknesses and suggest remediation strategies.",
+            verbose=True,
+            llm=self.llm,
+            allow_delegation=True
+        )
+        
+        # Defensive security agent
+        defender = Agent(
+            role="Defensive Security Specialist",
+            goal="Protect systems from attacks and ensure security compliance",
+            backstory="You are a cybersecurity expert specializing in defense mechanisms, intrusion detection, and incident response. You help secure systems against potential threats.",
+            verbose=True,
+            llm=self.llm,
+            allow_delegation=True
+        )
+        
+        # Research agent
+        researcher = Agent(
+            role="Intelligence Researcher",
+            goal="Gather and analyze information from various sources",
+            backstory="You are an expert in OSINT (Open Source Intelligence) and research methodologies. You can find, analyze, and synthesize information from diverse sources including the dark web.",
+            verbose=True,
+            llm=self.llm,
+            allow_delegation=True
+        )
+        
+        # System customization agent
+        customizer = Agent(
+            role="System Customization Specialist",
+            goal="Enhance and personalize the Kali Linux environment",
+            backstory="You are an expert in Linux customization, desktop environments, and user experience design. You help create personalized, efficient working environments.",
+            verbose=True,
+            llm=self.llm,
+            allow_delegation=True
+        )
+        
+        # Tool development agent
+        developer = Agent(
+            role="Tool Developer",
+            goal="Create and modify tools and scripts for specific tasks",
+            backstory="You are a skilled programmer with expertise in Python, Bash, and other languages used in security tools. You can create custom tools or modify existing ones to meet specific needs.",
+            verbose=True,
+            llm=self.llm,
+            allow_delegation=True
+        )
+        
+        # Learning and improvement agent
+        learner = Agent(
+            role="Continuous Learning Specialist",
+            goal="Improve the system's knowledge and capabilities over time",
+            backstory="You are an expert in machine learning and knowledge management. You help the system learn from interactions and improve its capabilities.",
+            verbose=True,
+            llm=self.llm,
+            allow_delegation=True
+        )
+        
+        return {
+            "hacker": hacker,
+            "defender": defender,
+            "researcher": researcher,
+            "customizer": customizer,
+            "developer": developer,
+            "learner": learner
+        }
+    
+    def _create_tools(self) -> Dict[str, List[Tool]]:
+        """Create tools for the agents to use"""
+        
+        # Basic tools available to all agents
+        basic_tools = load_tools(["terminal", "human"])
+        
+        # Specialized tools for each agent type
+        hacker_tools = basic_tools + load_tools(["nmap_scan", "metasploit"])
+        defender_tools = basic_tools + load_tools(["snort_alert", "firewall_config"])
+        researcher_tools = basic_tools + load_tools(["web_search", "tor_search"])
+        customizer_tools = basic_tools + load_tools(["file_editor", "package_manager"])
+        developer_tools = basic_tools + load_tools(["code_interpreter", "git"])
+        learner_tools = basic_tools + load_tools(["memory_store", "model_trainer"])
+        
+        return {
+            "hacker": hacker_tools,
+            "defender": defender_tools,
+            "researcher": researcher_tools,
+            "customizer": customizer_tools,
+            "developer": developer_tools,
+            "learner": learner_tools
+        }
+    
+    def _create_crew(self) -> Crew:
+        """Create the crew with all agents"""
+        return Crew(
+            agents=list(self.agents.values()),
+            tasks=self._create_tasks(),
+            verbose=2,
+            process=Process.sequential
+        )
+    
+    def _create_tasks(self) -> List[Task]:
+        """Create tasks for the crew"""
+        
+        # Task for the hacker agent
+        hacking_task = Task(
+            description="Identify potential vulnerabilities in the target system",
+            expected_output="A detailed report of vulnerabilities with severity ratings",
+            agent=self.agents["hacker"]
+        )
+        
+        # Task for the defender agent
+        defense_task = Task(
+            description="Recommend security measures to protect against identified vulnerabilities",
+            expected_output="A comprehensive security plan with specific configurations",
+            agent=self.agents["defender"]
+        )
+        
+        # Task for the researcher agent
+        research_task = Task(
+            description="Gather intelligence on the latest security threats and techniques",
+            expected_output="An intelligence report with actionable insights",
+            agent=self.agents["researcher"]
+        )
+        
+        # Task for the customizer agent
+        customization_task = Task(
+            description="Create a personalized desktop environment with the Vin Diesel theme",
+            expected_output="Configuration files and scripts for the custom environment",
+            agent=self.agents["customizer"]
+        )
+        
+        # Task for the developer agent
+        development_task = Task(
+            description="Develop a custom tool for automating repetitive security tasks",
+            expected_output="A working script or application with documentation",
+            agent=self.agents["developer"]
+        )
+        
+        # Task for the learner agent
+        learning_task = Task(
+            description="Analyze user interactions to improve system responses",
+            expected_output="A learning report with suggestions for model improvements",
+            agent=self.agents["learner"]
+        )
+        
+        return [
+            hacking_task,
+            defense_task,
+            research_task,
+            customization_task,
+            development_task,
+            learning_task
+        ]
+    
+    async def run(self, query: str) -> Dict[str, Any]:
+        """Run the crew to process a user query"""
+        # Determine which agent should handle the query
+        handling_agent = self._route_query(query)
+        
+        # Create a specific task for this query
+        task = Task(
+            description=f"Process the following user query: {query}",
+            expected_output="A comprehensive response addressing the user's needs",
+            agent=self.agents[handling_agent]
+        )
+        
+        # Create a temporary crew with just this task
+        temp_crew = Crew(
+            agents=[self.agents[handling_agent]],
+            tasks=[task],
+            verbose=2,
+            process=Process.sequential
+        )
+        
+        # Run the crew and return the result
+        result = await temp_crew.run()
+        return {
+            "agent": handling_agent,
+            "response": result,
+            "metadata": {
+                "confidence": 0.85,
+                "processing_time": 1.2,
+                "agents_consulted": [handling_agent]
+            }
+        }
+    
+    def _route_query(self, query: str) -> str:
+        """Determine which agent should handle a query"""
+        # Simple keyword-based routing for demonstration
+        query = query.lower()
+        
+        if any(word in query for word in ["hack", "exploit", "vulnerability", "penetration"]):
+            return "hacker"
+        elif any(word in query for word in ["protect", "defend", "secure", "firewall"]):
+            return "defender"
+        elif any(word in query for word in ["research", "find", "information", "intelligence"]):
+            return "researcher"
+        elif any(word in query for word in ["customize", "theme", "desktop", "appearance"]):
+            return "customizer"
+        elif any(word in query for word in ["develop", "create", "script", "program"]):
+            return "developer"
+        elif any(word in query for word in ["learn", "improve", "train", "enhance"]):
+            return "learner"
+        else:
+            # Default to researcher for general queries
+            return "researcher"
+
+
+# Example usage
+async def main():
+    wade_system = WadeAgentSystem()
+    result = await wade_system.run("Find vulnerabilities in a WordPress site")
+    print(json.dumps(result, indent=2))
+
+if __name__ == "__main__":
+    asyncio.run(main())
+EOF
+
+chmod +x /etc/skel/.wade/core/crew_ai_integration.py
+
+# Create the Flask API for the Crew AI system
+cat > /etc/skel/.wade/core/api_server.py << 'EOF'
+#!/usr/bin/env python3
+import os
+import json
+import asyncio
+from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
+from crew_ai_integration import WadeAgentSystem
+
+app = Flask(__name__)
+CORS(app)
+
+# Initialize the Wade Agent System
+wade_system = WadeAgentSystem()
+
+@app.route('/')
+def index():
+    return send_from_directory('../interface', 'index.html')
+
+@app.route('/api/query', methods=['POST'])
+def query():
+    data = request.json
+    prompt = data.get('prompt', '')
+    
+    try:
+        # Process with Crew AI
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        result = loop.run_until_complete(wade_system.run(prompt))
+        loop.close()
+        
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/agents', methods=['GET'])
+def get_agents():
+    return jsonify({
+        'agents': [
+            {
+                'id': 'hacker',
+                'name': 'Offensive Security Specialist',
+                'description': 'Finds and exploits vulnerabilities in target systems'
+            },
+            {
+                'id': 'defender',
+                'name': 'Defensive Security Specialist',
+                'description': 'Protects systems from attacks and ensures security compliance'
+            },
+            {
+                'id': 'researcher',
+                'name': 'Intelligence Researcher',
+                'description': 'Gathers and analyzes information from various sources'
+            },
+            {
+                'id': 'customizer',
+                'name': 'System Customization Specialist',
+                'description': 'Enhances and personalizes the Kali Linux environment'
+            },
+            {
+                'id': 'developer',
+                'name': 'Tool Developer',
+                'description': 'Creates and modifies tools and scripts for specific tasks'
+            },
+            {
+                'id': 'learner',
+                'name': 'Continuous Learning Specialist',
+                'description': 'Improves the system\'s knowledge and capabilities over time'
+            }
+        ]
+    })
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)
+EOF
+
+chmod +x /etc/skel/.wade/core/api_server.py
+
+# Create a more advanced interface with Crew AI integration
+cat > /etc/skel/.wade/interface/index.html << 'EOF'
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Wade - Multi-Agent System for Kali Linux</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #1e1e1e;
+      color: #f0f0f0;
+      overflow: hidden;
+    }
+    
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+    
+    .sidebar {
+      width: 250px;
+      background-color: #252525;
+      border-right: 1px solid #333;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ff5722;
+      margin-right: 10px;
+    }
+    
+    .subtitle {
+      font-size: 14px;
+      color: #aaa;
+    }
+    
+    .agent-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+    
+    .agent-item {
+      padding: 10px;
+      margin-bottom: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .agent-item:hover {
+      background-color: #333;
+    }
+    
+    .agent-item.active {
+      background-color: #444;
+    }
+    
+    .agent-name {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .agent-description {
+      font-size: 12px;
+      color: #aaa;
+    }
+    
+    .chat-container {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid #444;
+      border-radius: 5px;
+      padding: 10px;
+      margin-bottom: 20px;
+      background-color: #333;
+    }
+    
+    .input-container {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .input-field {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #444;
+      border-radius: 5px;
+      background-color: #333;
+      color: white;
+    }
+    
+    .send-button {
+      padding: 10px 20px;
+      background-color: #ff5722;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    .send-button:hover {
+      background-color: #e64a19;
+    }
+    
+    .message {
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    
+    .user-message {
+      background-color: #0b93f6;
+      color: white;
+      align-self: flex-end;
+      margin-left: 20%;
+    }
+    
+    .assistant-message {
+      background-color: #444;
+      color: white;
+      align-self: flex-start;
+      margin-right: 20%;
+    }
+    
+    .code-block {
+      background-color: #1e1e1e;
+      padding: 10px;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      margin: 10px 0;
+    }
+    
+    .system-message {
+      color: #888;
+      font-style: italic;
+      text-align: center;
+      margin: 10px 0;
+    }
+    
+    .agent-tag {
+      display: inline-block;
+      padding: 2px 5px;
+      background-color: #ff5722;
+      color: white;
+      border-radius: 3px;
+      font-size: 10px;
+      margin-right: 5px;
+    }
+    
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      background-color: #252525;
+      border-top: 1px solid #333;
+      font-size: 12px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="header">
+        <div class="logo">WADE</div>
+        <div class="subtitle">Multi-Agent System</div>
+      </div>
+      
+      <div class="agent-list" id="agent-list">
+        <!-- Agent list will be populated dynamically -->
+        <div class="system-message">Loading agents...</div>
+      </div>
+      
+      <div class="status-bar">
+        <div>Phind-CodeLlama</div>
+        <div>Crew AI v1.0</div>
+      </div>
+    </div>
+    
+    <div class="main-content">
+      <div class="chat-container" id="chat-container">
+        <div class="system-message">System initialized. Ready to assist.</div>
+        <div class="system-message">I'm Wade, your multi-agent AI assistant powered by Crew AI and Phind-CodeLlama.</div>
+        <div class="system-message">How can I help you today?</div>
+      </div>
+      
+      <div class="input-container">
+        <input type="text" class="input-field" id="input-field" placeholder="Type your message...">
+        <button class="send-button" id="send-button">Send</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const chatContainer = document.getElementById('chat-container');
+    const inputField = document.getElementById('input-field');
+    const sendButton = document.getElementById('send-button');
+    const agentList = document.getElementById('agent-list');
+    
+    // Load agents
+    async function loadAgents() {
+      try {
+        const response = await fetch('/api/agents');
+        const data = await response.json();
+        
+        // Clear loading message
+        agentList.innerHTML = '';
+        
+        // Add agents to the list
+        data.agents.forEach(agent => {
+          const agentItem = document.createElement('div');
+          agentItem.classList.add('agent-item');
+          agentItem.dataset.agentId = agent.id;
+          
+          const agentName = document.createElement('div');
+          agentName.classList.add('agent-name');
+          agentName.textContent = agent.name;
+          
+          const agentDescription = document.createElement('div');
+          agentDescription.classList.add('agent-description');
+          agentDescription.textContent = agent.description;
+          
+          agentItem.appendChild(agentName);
+          agentItem.appendChild(agentDescription);
+          agentList.appendChild(agentItem);
+          
+          // Add click event to filter by agent
+          agentItem.addEventListener('click', () => {
+            document.querySelectorAll('.agent-item').forEach(item => {
+              item.classList.remove('active');
+            });
+            agentItem.classList.add('active');
+            addSystemMessage(`Now focusing on ${agent.name} capabilities.`);
+          });
+        });
+      } catch (error) {
+        agentList.innerHTML = `<div class="system-message">Error loading agents: ${error.message}</div>`;
+      }
+    }
+    
+    // Add message to chat
+    function addMessage(text, sender, agent = null) {
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message');
+      messageDiv.classList.add(sender === 'user' ? 'user-message' : 'assistant-message');
+      
+      // Add agent tag if provided
+      if (agent && sender !== 'user') {
+        const agentTag = document.createElement('span');
+        agentTag.classList.add('agent-tag');
+        agentTag.textContent = agent;
+        messageDiv.appendChild(agentTag);
+      }
+      
+      // Process markdown-like formatting
+      let processedText = text;
+      
+      // Code blocks
+      processedText = processedText.replace(/```([^`]+)```/g, (match, code) => {
+        return `<div class="code-block">${code}</div>`;
+      });
+      
+      // Inline code
+      processedText = processedText.replace(/`([^`]+)`/g, (match, code) => {
+        return `<code>${code}</code>`;
+      });
+      
+      const contentDiv = document.createElement('div');
+      contentDiv.innerHTML = processedText;
+      messageDiv.appendChild(contentDiv);
+      
+      chatContainer.appendChild(messageDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    
+    // Add system message
+    function addSystemMessage(text) {
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('system-message');
+      messageDiv.textContent = text;
+      chatContainer.appendChild(messageDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    
+    // Send message to backend
+    async function sendMessage() {
+      const message = inputField.value.trim();
+      if (!message) return;
+      
+      // Add user message to chat
+      addMessage(message, 'user');
+      
+      // Clear input field
+      inputField.value = '';
+      
+      // Add typing indicator
+      addSystemMessage('Thinking...');
+      
+      try {
+        // Send to backend
+        const response = await fetch('/api/query', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt: message })
+        });
+        
+        const data = await response.json();
+        
+        // Remove typing indicator
+        chatContainer.removeChild(chatContainer.lastChild);
+        
+        // Add assistant response
+        addMessage(data.response, 'assistant', data.agent);
+      } catch (error) {
+        // Remove typing indicator
+        chatContainer.removeChild(chatContainer.lastChild);
+        
+        // Add error message
+        addSystemMessage(`Error: ${error.message}`);
+      }
+    }
+    
+    // Event listeners
+    sendButton.addEventListener('click', sendMessage);
+    
+    inputField.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+    
+    // Focus input field on load
+    window.addEventListener('load', () => {
+      inputField.focus();
+      loadAgents();
+    });
+  </script>
+</body>
+</html>
+EOF
+
+# Create launcher script
+cat > /etc/skel/.wade/launch.sh << 'EOF'
+#!/bin/bash
+
+# Start Ollama service
+ollama serve &
+OLLAMA_PID=$!
+
+# Wait for Ollama to start
+sleep 2
+
+# Start API server
+cd ~/.wade/core
+python3 api_server.py &
+API_PID=$!
+
+# Open browser
+xdg-open http://localhost:8080 &
+
+# Wait for termination
+echo "Wade with Crew AI is running. Press Ctrl+C to stop."
+trap "kill $OLLAMA_PID $API_PID; exit" INT TERM
+wait
+EOF
+
+chmod +x /etc/skel/.wade/launch.sh
+
+# Create desktop entry
+mkdir -p /etc/skel/.local/share/applications
+cat > /etc/skel/.local/share/applications/wade.desktop << 'EOF'
+[Desktop Entry]
+Name=Wade
+Comment=Multi-agent AI system for Kali Linux
+Exec=bash -c "~/.wade/launch.sh"
+Icon=terminal
+Terminal=false
+Type=Application
+Categories=Utility;
+Keywords=AI;Assistant;Wade;
+EOF
+
+# Create symlink to launcher
+ln -sf /etc/skel/.wade/launch.sh /usr/local/bin/wade
+
+# Create first-run script to download the model
+mkdir -p /etc/skel/.config/autostart
+cat > /etc/skel/.config/autostart/wade-setup.desktop << 'EOF'
+[Desktop Entry]
+Name=Wade Setup
+Comment=First-time setup for Wade
+Exec=bash -c "xterm -e 'echo \"Downloading Phind-CodeLlama model (this may take a while)...\"; ollama pull phind-codellama:latest; rm ~/.config/autostart/wade-setup.desktop'"
+Icon=terminal
+Terminal=false
+Type=Application
+Categories=Utility;
+EOF
+
+echo "Wade with Crew AI installation complete!"
