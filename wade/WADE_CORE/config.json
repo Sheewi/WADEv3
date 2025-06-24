@@ -1,0 +1,108 @@
+{
+  "version": "1.0.0",
+  "system": {
+    "name": "WADE",
+    "description": "Weaponized Autonomous Deployment Engine",
+    "debug_mode": false,
+    "log_level": "INFO",
+    "max_threads": 8,
+    "max_processes": 4,
+    "timeout": 30,
+    "retry_attempts": 3,
+    "retry_delay": 5
+  },
+  "paths": {
+    "runtime_dir": "../WADE_RUNTIME",
+    "logs_dir": "../WADE_RUNTIME/logs",
+    "temp_dir": "../WADE_RUNTIME/temp",
+    "data_dir": "../datasets",
+    "config_dir": "."
+  },
+  "memory": {
+    "short_term": {
+      "max_size": 1000,
+      "expiration_time": 3600
+    },
+    "long_term": {
+      "storage_type": "json",
+      "max_size": 10000,
+      "backup_interval": 3600
+    }
+  },
+  "agents": {
+    "default_agents": ["monk", "sage", "warrior", "diplomat"],
+    "max_agents": 10,
+    "agent_timeout": 60,
+    "agent_config": {
+      "monk": {
+        "observation_threshold": 0.7,
+        "analysis_depth": 3
+      },
+      "sage": {
+        "wisdom_threshold": 0.8,
+        "insight_depth": 4
+      },
+      "warrior": {
+        "defense_threshold": 0.6,
+        "threat_sensitivity": 0.7
+      },
+      "diplomat": {
+        "mediation_threshold": 0.5,
+        "communication_sensitivity": 0.8
+      }
+    }
+  },
+  "evolution": {
+    "enabled": true,
+    "feedback_threshold": 0.6,
+    "learning_rate": 0.1,
+    "adaptation_interval": 3600,
+    "max_generations": 100,
+    "mutation_rate": 0.05
+  },
+  "interface": {
+    "cli": {
+      "enabled": true,
+      "prompt": "WADE> ",
+      "history_size": 100
+    },
+    "gui": {
+      "enabled": true,
+      "host": "0.0.0.0",
+      "port": 8080,
+      "theme": "dark",
+      "update_interval": 1000
+    }
+  },
+  "security": {
+    "sandbox_enabled": true,
+    "intrusion_detection_enabled": true,
+    "encryption_enabled": true,
+    "secure_memory_enabled": true,
+    "access_control": {
+      "enabled": true,
+      "default_permission": "read",
+      "admin_users": ["wade_admin"]
+    }
+  },
+  "network": {
+    "enabled": true,
+    "host": "0.0.0.0",
+    "port": 8081,
+    "max_connections": 10,
+    "connection_timeout": 30,
+    "use_ssl": false
+  },
+  "tools": {
+    "enabled": true,
+    "max_execution_time": 60,
+    "allowed_tools": ["system_info", "network", "file_browser", "process_manager"]
+  },
+  "api": {
+    "enabled": false,
+    "host": "0.0.0.0",
+    "port": 8082,
+    "rate_limit": 100,
+    "require_auth": true
+  }
+}
