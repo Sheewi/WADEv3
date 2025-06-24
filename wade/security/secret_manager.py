@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 WADE Secret Manager
-Manages secrets and credentials securely.
+Manages secrets and credentials securely with proper encryption.
 """
 
 import os
@@ -10,7 +10,11 @@ import json
 import base64
 import hashlib
 import time
+import secrets
 from typing import Dict, List, Any, Optional
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 class SecretManager:
     """
@@ -71,7 +75,7 @@ class SecretManager:
     
     def _encrypt_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Encrypt data using master key.
+        Encrypt data using master key with proper cryptography.
         
         Args:
             data: Data to encrypt
@@ -79,8 +83,6 @@ class SecretManager:
         Returns:
             Encrypted data
         """
-        # Simple encryption for demonstration purposes
-        # In a real implementation, use a proper encryption library
         if not self.master_key:
             return {}
         
@@ -88,21 +90,27 @@ class SecretManager:
             # Convert data to JSON string
             data_str = json.dumps(data)
             
+            # Generate salt
+            salt = secrets.token_bytes(16)
+            
+            # Derive key using PBKDF2
+            kdf = PBKDF2HMAC(
+                algorithm=hashes.SHA256(),
+                length=32,
+                salt=salt,
+                iterations=100000,
+            )
+            key = base64.urlsafe_b64encode(kdf.derive(self.master_key.encode()))
+            
+            # Create Fernet cipher
+            cipher_suite = Fernet(key)
+            
             # Encrypt data
-            key = hashlib.sha256(self.master_key.encode()).digest()
-            encrypted = []
-            
-            for i, char in enumerate(data_str):
-                key_char = key[i % len(key)]
-                encrypted.append(chr((ord(char) + key_char) % 256))
-            
-            encrypted_str = ''.join(encrypted)
-            
-            # Encode as base64
-            encoded = base64.b64encode(encrypted_str.encode()).decode()
+            encrypted = cipher_suite.encrypt(data_str.encode())
             
             return {
-                'encrypted': encoded,
+                'encrypted': base64.b64encode(encrypted).decode(),
+                'salt': base64.b64encode(salt).decode(),
                 'timestamp': time.time()
             }
             
@@ -112,7 +120,7 @@ class SecretManager:
     
     def _decrypt_data(self, encrypted_data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Decrypt data using master key.
+        Decrypt data using master key with proper cryptography.
         
         Args:
             encrypted_data: Encrypted data
@@ -120,30 +128,31 @@ class SecretManager:
         Returns:
             Decrypted data
         """
-        # Simple decryption for demonstration purposes
-        # In a real implementation, use a proper encryption library
         if not self.master_key:
             return {}
         
         try:
-            # Get encrypted data
-            encoded = encrypted_data.get('encrypted', '')
+            # Get encrypted data and salt
+            encrypted = base64.b64decode(encrypted_data.get('encrypted', ''))
+            salt = base64.b64decode(encrypted_data.get('salt', ''))
             
-            # Decode from base64
-            encrypted_str = base64.b64decode(encoded).decode()
+            # Derive key using PBKDF2
+            kdf = PBKDF2HMAC(
+                algorithm=hashes.SHA256(),
+                length=32,
+                salt=salt,
+                iterations=100000,
+            )
+            key = base64.urlsafe_b64encode(kdf.derive(self.master_key.encode()))
+            
+            # Create Fernet cipher
+            cipher_suite = Fernet(key)
             
             # Decrypt data
-            key = hashlib.sha256(self.master_key.encode()).digest()
-            decrypted = []
-            
-            for i, char in enumerate(encrypted_str):
-                key_char = key[i % len(key)]
-                decrypted.append(chr((ord(char) - key_char) % 256))
-            
-            decrypted_str = ''.join(decrypted)
+            decrypted = cipher_suite.decrypt(encrypted)
             
             # Parse JSON
-            return json.loads(decrypted_str)
+            return json.loads(decrypted.decode())
             
         except Exception as e:
             print(f"Error decrypting data: {e}")
