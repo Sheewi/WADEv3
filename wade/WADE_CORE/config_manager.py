@@ -364,8 +364,16 @@ class ConfigManager:
             validate(instance=self.config, schema=self.schema)
             return True
         except ValidationError as e:
-            print(f"Configuration validation error: {e.message}")
-            return False
+            error_msg = f"Configuration validation error: {e.message}"
+            print(error_msg)
+            # Log the validation path for debugging
+            if hasattr(e, 'absolute_path'):
+                print(f"Error path: {'.'.join(str(p) for p in e.absolute_path)}")
+            raise ValueError(f"Invalid configuration: {e.message}")
+        except Exception as e:
+            error_msg = f"Unexpected validation error: {str(e)}"
+            print(error_msg)
+            raise ValueError(f"Configuration validation failed: {str(e)}")
     
     def get(self, key: str, default: Any = None) -> Any:
         """

@@ -28,10 +28,10 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Cache pip dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt', 'wade/requirements.txt', 'setup.py') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
@@ -82,7 +82,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Cache pip dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt') }}
@@ -96,6 +96,10 @@ jobs:
           pip install pytest pytest-cov pytest-xdist pytest-mock
           # Install essential dependencies first
           pip install jsonschema pyyaml python-dotenv pydantic cryptography psutil pyjwt bcrypt
+          # Install the package in editable mode
+          pip install -e . || echo "Editable install failed, continuing..."
+          # Install the package in editable mode
+          pip install -e . || echo "Editable install failed, continuing..."
           # Install wade-specific requirements first
           pip install -r wade/requirements.txt || echo "Wade requirements installation failed"
           # Try to install all dependencies with verbose output, fallback to essential ones if needed
