@@ -98,8 +98,6 @@ jobs:
           pip install jsonschema pyyaml python-dotenv pydantic cryptography psutil pyjwt bcrypt
           # Install the package in editable mode
           pip install -e . || echo "Editable install failed, continuing..."
-          # Install the package in editable mode
-          pip install -e . || echo "Editable install failed, continuing..."
           # Install wade-specific requirements first
           pip install -r wade/requirements.txt || echo "Wade requirements installation failed"
           # Try to install all dependencies with verbose output, fallback to essential ones if needed
