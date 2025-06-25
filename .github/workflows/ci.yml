@@ -41,10 +41,12 @@ jobs:
           pip install black isort flake8 pytest pytest-cov
           # Install essential dependencies first
           pip install jsonschema pyyaml python-dotenv pydantic cryptography psutil
-          # Try to install all dependencies, fallback to essential ones if needed
-          pip install -r requirements.txt || {
+          # Try to install all dependencies with verbose output, fallback to essential ones if needed
+          echo "Attempting to install all requirements..."
+          pip install -r requirements.txt --verbose || {
             echo "Full requirements installation failed, installing remaining essential packages..."
             pip install flask fastapi bcrypt paramiko sqlalchemy redis prometheus-client pyjwt
+            echo "Attempting to install CrewAI with fallback versions..."
             pip install crewai>=0.130.0 || pip install crewai>=0.28.8 || echo "CrewAI installation failed, continuing without it"
           }
 
@@ -96,10 +98,13 @@ jobs:
           pip install jsonschema pyyaml python-dotenv pydantic cryptography psutil pyjwt bcrypt
           # Install wade-specific requirements first
           pip install -r wade/requirements.txt || echo "Wade requirements installation failed"
-          # Try to install all dependencies, fallback to essential ones if needed
-          pip install -r requirements.txt || {
+          # Try to install all dependencies with verbose output, fallback to essential ones if needed
+          echo "Attempting to install all requirements..."
+          pip install -r requirements.txt --verbose || {
             echo "Full requirements installation failed, installing remaining essential packages..."
             pip install flask fastapi bcrypt paramiko sqlalchemy redis prometheus-client pyjwt
+            echo "Attempting to install CrewAI with fallback versions..."
+            echo "Attempting to install CrewAI with fallback versions..."
             pip install crewai>=0.130.0 || pip install crewai>=0.28.8 || echo "CrewAI installation failed, continuing without it"
           }
 
@@ -174,10 +179,12 @@ jobs:
           pip install pytest pytest-cov
           # Install essential dependencies first
           pip install jsonschema pyyaml python-dotenv pydantic cryptography psutil
-          # Try to install all dependencies, fallback to essential ones if needed
-          pip install -r requirements.txt || {
+          # Try to install all dependencies with verbose output, fallback to essential ones if needed
+          echo "Attempting to install all requirements..."
+          pip install -r requirements.txt --verbose || {
             echo "Full requirements installation failed, installing remaining essential packages..."
             pip install flask fastapi bcrypt paramiko sqlalchemy redis prometheus-client pyjwt
+            echo "Attempting to install CrewAI with fallback versions..."
             pip install crewai>=0.130.0 || pip install crewai>=0.28.8 || echo "CrewAI installation failed, continuing without it"
           }
 
