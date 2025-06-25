@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Wade CrewAI - Main Crew Definition and Task Management
+WADE (Weaponized Adaptive Defense Engine) - Enhanced Multi-Agent System with Self-Evolution
 """
 
 from crewai import Crew, Task, Process
@@ -17,18 +17,45 @@ from agents import (
 from config import CREW_MEMORY, CREW_VERBOSE, MAX_ITERATIONS, MAX_EXECUTION_TIME
 from llm_router import llm_router, TaskType
 from dynamic_agents import dynamic_agent_factory, parse_agent_request
+from adaptive_learning import AdaptiveLearningSystem
 import json
 import time
-from typing import Dict, List, Any, Optional
+import logging
+import os
+from pathlib import Path
+from typing import Dict, List, Any, Optional, Tuple
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger("WADE")
 
 
 class WadeCrew:
-    """Wade AI Crew - Multi-Agent Security Assistant"""
+    """WADE - Enhanced Multi-Agent Security System with Self-Evolution"""
 
     def __init__(self):
+        # Initialize memory directory
+        self.memory_dir = Path(os.path.expanduser("~/.wade/memory"))
+        self.memory_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Initialize adaptive learning system
+        self.adaptive_learning = AdaptiveLearningSystem(self.memory_dir)
+        
+        # Initialize crew
         self.crew = self._create_crew()
         self.conversation_history = []
         self.active_tasks = {}
+        
+        logger.info("WADE initialized with self-evolution capabilities")
+        logger.info(f"Memory directory: {self.memory_dir}")
+        
+        # Trigger initial evolution to set baseline
+        try:
+            self.adaptive_learning.evolve_system()
+        except Exception as e:
+            logger.error(f"Error during initial evolution: {e}")
 
     def _create_crew(self) -> Crew:
         """Create the Wade crew with all agents"""
@@ -43,19 +70,24 @@ class WadeCrew:
             max_iter=MAX_ITERATIONS,
         )
 
-    def process_request(self, user_input: str, context: Dict[str, Any] = None) -> str:
+    def process_request(self, user_input: str, context: Dict[str, Any] = None, query_type: str = None) -> str:
         """
-        Process user request through the Wade crew
+        Process user request through the WADE multi-agent system with adaptive learning
 
         Args:
             user_input: User's request or question
             context: Additional context for the request
+            query_type: Type of query for better personalization
 
         Returns:
-            Response from Wade crew
+            Response from WADE system
         """
         try:
             start_time = time.time()
+            logger.info(f"Processing request: {user_input[:50]}...")
+            
+            if query_type:
+                logger.info(f"Query type detected: {query_type}")
 
             # Check if user is requesting agent creation
             agent_request = parse_agent_request(user_input)
@@ -63,8 +95,16 @@ class WadeCrew:
             if agent_request.get("is_agent_request"):
                 return self._handle_agent_creation_request(agent_request, user_input)
 
+            # Apply adaptive learning to enhance the request processing
+            base_plan = {"user_input": user_input}
+            if context:
+                base_plan.update(context)
+                
+            # Adapt the plan based on user patterns and evolution parameters
+            adapted_plan = self.adaptive_learning.adapt_to_user(user_input, base_plan)
+            
             # Analyze request to determine required agents and tasks
-            task_plan = self._analyze_request(user_input, context)
+            task_plan = self._analyze_request(user_input, adapted_plan)
 
             # Check if we need specialized agents for this request
             specialized_agents = dynamic_agent_factory.get_or_create_agents_for_request(
@@ -78,6 +118,17 @@ class WadeCrew:
                 task_plan["specialized_agents"] = [
                     agent.role for agent in specialized_agents
                 ]
+                
+            # Add any evolution-based agents if needed
+            evolution_params = adapted_plan.get("evolution_params", {})
+            if evolution_params.get("multi_agent_coordination", 0.5) > 0.7:
+                # Add more specialized agents for complex tasks
+                additional_agents = dynamic_agent_factory.create_specialized_agents(task_plan)
+                if additional_agents:
+                    active_agents.extend(additional_agents)
+                    if "specialized_agents" not in task_plan:
+                        task_plan["specialized_agents"] = []
+                    task_plan["specialized_agents"].extend([agent.role for agent in additional_agents])
 
             # Create dynamic tasks based on the request
             tasks = self._create_tasks(task_plan, user_input, active_agents)
@@ -111,13 +162,43 @@ class WadeCrew:
             # Store conversation history
             self._store_conversation(user_input, result, task_plan)
 
-            # Format response with Wade's personality
+            # Format response with WADE's personality
             formatted_response = self._format_response(result, task_plan)
+            
+            # Personalize the response based on user patterns and evolution parameters
+            user_patterns = adapted_plan.get("user_patterns", {})
+            personalized_response = self.adaptive_learning.personalize_response(
+                formatted_response, user_patterns, query_type
+            )
+            
+            # Record interaction for learning
+            self.adaptive_learning.record_interaction({
+                "request_type": query_type or task_type.value,
+                "complexity": task_plan.get("complexity", "moderate"),
+                "agents_used": [agent.name for agent in active_agents],
+                "success_rating": 4,  # Default success rating
+                "response_time": response_time,
+                "user_feedback": None  # No feedback yet
+            })
 
-            return formatted_response
+            return personalized_response
 
         except Exception as e:
-            return f"Wade encountered an error: {str(e)}. That's not how family operates - let me try a different approach."
+            logger.error(f"Error processing request: {e}")
+            
+            # Record error for learning
+            try:
+                self.adaptive_learning.record_interaction({
+                    "request_type": "error",
+                    "complexity": "high",
+                    "success_rating": 1,
+                    "response_time": time.time() - start_time,
+                    "error": str(e)
+                })
+            except Exception as inner_e:
+                logger.error(f"Error recording interaction: {inner_e}")
+                
+            return f"WADE encountered an error: {str(e)}. System will adapt to prevent similar errors in the future."
 
     def _analyze_request(
         self, user_input: str, context: Dict[str, Any] = None
@@ -430,28 +511,68 @@ I can also create completely custom agents - just describe what you need!
         return tasks
 
     def _format_response(self, result: str, task_plan: Dict[str, Any]) -> str:
-        """Format the crew response with Wade's personality"""
+        """Format the crew response with WADE's enhanced personality"""
 
-        # Wade's signature phrases
+        # WADE's signature phrases - more sophisticated and technical
         intro_phrases = [
-            "Family,",
-            "Listen up,",
-            "Here's the deal,",
-            "That's what family does -",
-            "One more ride into this challenge -",
+            "Analysis complete.",
+            "System assessment finalized.",
+            "Security evaluation concluded.",
+            "Technical assessment completed.",
+            "Operational analysis finished.",
         ]
 
+        # Technical phrases for different task types
+        technical_intros = {
+            "security": [
+                "Security analysis indicates:",
+                "Vulnerability assessment results:",
+                "Security posture evaluation:",
+                "Threat analysis outcome:",
+                "Security protocol assessment:"
+            ],
+            "coding": [
+                "Code analysis complete:",
+                "Programming solution developed:",
+                "Algorithm implementation ready:",
+                "Development framework established:",
+                "Technical implementation prepared:"
+            ],
+            "tool": [
+                "Tool development completed:",
+                "Utility framework established:",
+                "Custom solution engineered:",
+                "Specialized tool ready for deployment:",
+                "Technical arsenal expanded:"
+            ],
+            "research": [
+                "Intelligence gathering complete:",
+                "Research findings compiled:",
+                "Information analysis concluded:",
+                "Data correlation finished:",
+                "Reconnaissance results available:"
+            ]
+        }
+
+        # Outro phrases - more technical and sophisticated
         outro_phrases = [
-            "We do this together.",
-            "Family never gives up.",
-            "That's how we roll.",
-            "One more ride, always.",
-            "Family comes first.",
+            "System will continue to evolve based on this interaction.",
+            "This solution has been added to the knowledge base for future reference.",
+            "Adaptive learning systems have recorded this approach for optimization.",
+            "Security posture has been enhanced through this interaction.",
+            "Technical capabilities have been expanded through this exchange.",
         ]
 
         import random
-
-        intro = random.choice(intro_phrases)
+        
+        task_type = task_plan.get("primary_type", "general").lower()
+        
+        # Choose appropriate intro based on task type
+        if task_type in technical_intros:
+            intro = random.choice(technical_intros[task_type])
+        else:
+            intro = random.choice(intro_phrases)
+            
         outro = random.choice(outro_phrases)
 
         # Format the response
@@ -524,6 +645,39 @@ I can also create completely custom agents - just describe what you need!
             ),
             "agent_names": [agent.role for agent in all_agents],
         }
+        
+    def get_evolution_status(self) -> Dict[str, Any]:
+        """Get the current evolution status"""
+        try:
+            return self.adaptive_learning.get_evolution_status()
+        except Exception as e:
+            logger.error(f"Error getting evolution status: {e}")
+            return {"error": str(e)}
+            
+    def trigger_evolution(self) -> Dict[str, Any]:
+        """Manually trigger system evolution"""
+        try:
+            return self.adaptive_learning.trigger_evolution()
+        except Exception as e:
+            logger.error(f"Error triggering evolution: {e}")
+            return {"evolved": False, "error": str(e)}
+            
+    def adjust_evolution_parameter(self, parameter: str, value: float, reason: str) -> bool:
+        """Manually adjust an evolution parameter"""
+        try:
+            return self.adaptive_learning.adjust_evolution_parameter(parameter, value, reason)
+        except Exception as e:
+            logger.error(f"Error adjusting parameter: {e}")
+            return False
+            
+    def record_interaction(self, interaction_data: Dict[str, Any]) -> bool:
+        """Record an interaction for learning"""
+        try:
+            self.adaptive_learning.record_interaction(interaction_data)
+            return True
+        except Exception as e:
+            logger.error(f"Error recording interaction: {e}")
+            return False
 
     def reset_crew(self):
         """Reset crew state"""

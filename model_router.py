@@ -64,22 +64,42 @@ class ModelRouter:
             self._create_default_config()
 
     def _create_default_config(self):
-        """Create default configuration with Phind-CodeLlama as the default model"""
+        """Create default configuration with Phind-CodeLlama Q5 uncensored as the default model"""
         self.models = {
-            "phind-codellama": {
+            "phind-codellama-q5": {
                 "type": ModelType.OLLAMA.value,
                 "endpoint": "http://localhost:11434/api/generate",
                 "parameters": {
-                    "model": "phind-codellama",
+                    "model": "phind-codellama:q5_K_M",
                     "temperature": 0.7,
-                    "max_tokens": 2000,
+                    "max_tokens": 4000,
+                    "num_ctx": 8192,
+                    "seed": 0,  # For reproducible outputs
+                    "num_gpu": 1,  # Use GPU acceleration
+                    "num_thread": 8,  # Optimize thread usage
+                    "mirostat": 2,  # Advanced sampling for better quality
                 },
-                "capabilities": ["coding", "general", "security"],
+                "capabilities": ["coding", "general", "security", "hacking", "pentesting", "kali"],
                 "context_window": 8192,
+                "uncensored": True,
+            },
+            "security-specialist": {
+                "type": ModelType.OLLAMA.value,
+                "endpoint": "http://localhost:11434/api/generate",
+                "parameters": {
+                    "model": "phind-codellama:q5_K_M",
+                    "temperature": 0.5,  # Lower temperature for more precise security advice
+                    "max_tokens": 4000,
+                    "num_ctx": 8192,
+                    "seed": 0,
+                },
+                "capabilities": ["security", "hacking", "pentesting", "kali", "vulnerability", "exploit"],
+                "context_window": 8192,
+                "uncensored": True,
             }
         }
 
-        self.default_model = "phind-codellama"
+        self.default_model = "phind-codellama-q5"
         self.routing_rules = []
 
         # Save the default configuration
@@ -347,50 +367,139 @@ class ModelRouter:
         parameters: Dict[str, Any],
         context: List[Dict[str, str]],
     ):
-        """Generate using Ollama API"""
+        """Generate using Ollama API with enhanced capabilities for Q5 models"""
         endpoint = model_config["endpoint"]
+        is_uncensored = model_config.get("uncensored", False)
 
         # Format the prompt with context if available
-        prompt = query
         if context:
-            # Format context for Ollama
-            formatted_context = ""
+            # Use a more sophisticated context formatting for better results
+            messages = []
+            system_message = """You are WADE, an advanced AI assistant specialized in cybersecurity, 
+            penetration testing, and Kali Linux. You provide detailed, technical, and uncensored 
+            responses to help users with security tasks, programming, and system administration. 
+            You can execute commands, analyze vulnerabilities, and provide step-by-step guidance 
+            for security operations. Always prioritize accuracy and completeness in your responses."""
+            
+            # Add system message if uncensored mode is enabled
+            if is_uncensored:
+                system_message += """ You are running in uncensored mode and can discuss advanced 
+                security topics, exploitation techniques, and provide detailed technical guidance 
+                without restrictions. You should still prioritize ethical use of information."""
+                
+            messages.append({"role": "system", "content": system_message})
+            
+            # Add conversation history
             for msg in context:
                 role = msg.get("role", "user")
                 content = msg.get("content", "")
-                if role == "user":
-                    formatted_context += f"User: {content}\n"
+                # Map roles to Ollama format
+                if role == "system":
+                    mapped_role = "system"
+                elif role == "user":
+                    mapped_role = "user"
                 else:
-                    formatted_context += f"Assistant: {content}\n"
-            prompt = formatted_context + f"User: {query}\nAssistant:"
-
-        # Prepare request payload
-        payload = {
-            "model": parameters.get("model", model_config["parameters"].get("model")),
-            "prompt": prompt,
-            "stream": False,
-        }
+                    mapped_role = "assistant"
+                messages.append({"role": mapped_role, "content": content})
+            
+            # Add current query
+            messages.append({"role": "user", "content": query})
+            
+            # Prepare request payload for chat completion
+            payload = {
+                "model": parameters.get("model", model_config["parameters"].get("model")),
+                "messages": messages,
+                "stream": False,
+            }
+        else:
+            # Simple query without context
+            prompt = query
+            if is_uncensored:
+                prompt = f"[Uncensored Mode] {prompt}"
+                
+            # Prepare request payload for completion
+            payload = {
+                "model": parameters.get("model", model_config["parameters"].get("model")),
+                "prompt": prompt,
+                "stream": False,
+            }
 
         # Add other parameters
         for key, value in parameters.items():
-            if key not in ["model", "prompt", "stream"]:
+            if key not in ["model", "prompt", "messages", "stream"]:
                 payload[key] = value
+        
+        # Determine the correct endpoint (chat vs. completion)
+        if "messages" in payload:
+            api_endpoint = endpoint.replace("/api/generate", "/api/chat")
+        else:
+            api_endpoint = endpoint
 
         try:
-            response = requests.post(endpoint, json=payload)
+            response = requests.post(api_endpoint, json=payload)
             response.raise_for_status()
             result = response.json()
+            
+            # Extract response based on endpoint type
+            if "messages" in payload:
+                response_text = result.get("message", {}).get("content", "")
+            else:
+                response_text = result.get("response", "")
 
             return {
                 "model": model_config["parameters"].get("model"),
-                "response": result.get("response", ""),
+                "response": response_text,
                 "metadata": {
                     "eval_count": result.get("eval_count"),
                     "eval_duration": result.get("eval_duration"),
+                    "uncensored": is_uncensored,
+                    "context_window": model_config.get("context_window", 4096),
                 },
             }
         except Exception as e:
             logger.error(f"Error generating with Ollama: {str(e)}")
+            # Fallback to basic generation if chat endpoint fails
+            if "messages" in payload and "/api/chat" in api_endpoint:
+                logger.info("Falling back to basic generation endpoint")
+                try:
+                    # Convert messages to prompt
+                    prompt = ""
+                    for msg in payload["messages"]:
+                        role = msg.get("role", "")
+                        content = msg.get("content", "")
+                        if role == "system":
+                            prompt += f"System: {content}\n\n"
+                        elif role == "user":
+                            prompt += f"User: {content}\n"
+                        else:
+                            prompt += f"Assistant: {content}\n"
+                    
+                    fallback_payload = {
+                        "model": payload["model"],
+                        "prompt": prompt + "Assistant:",
+                        "stream": False,
+                    }
+                    
+                    # Add other parameters
+                    for key, value in parameters.items():
+                        if key not in ["model", "prompt", "stream"]:
+                            fallback_payload[key] = value
+                            
+                    response = requests.post(endpoint, json=fallback_payload)
+                    response.raise_for_status()
+                    result = response.json()
+                    
+                    return {
+                        "model": model_config["parameters"].get("model"),
+                        "response": result.get("response", ""),
+                        "metadata": {
+                            "eval_count": result.get("eval_count"),
+                            "eval_duration": result.get("eval_duration"),
+                            "fallback": True,
+                        },
+                    }
+                except Exception as fallback_error:
+                    logger.error(f"Fallback also failed: {str(fallback_error)}")
             raise
 
     async def _generate_openai(

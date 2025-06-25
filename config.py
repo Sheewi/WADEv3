@@ -35,7 +35,9 @@ for directory in [
 # LLM Configuration
 OLLAMA_BASE_URL = "http://localhost:11434"
 WADE_MODEL = "wade"
-BASE_MODEL = "phind-codellama:latest"
+BASE_MODEL = "phind-codellama:q5_K_M"  # Using Q5 quantized model for better performance
+MODEL_UNCENSORED = True
+MODEL_CONTEXT_SIZE = 8192
 
 # CrewAI Configuration
 CREW_MEMORY = True
