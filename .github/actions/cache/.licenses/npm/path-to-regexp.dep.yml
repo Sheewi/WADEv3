@@ -3,7 +3,7 @@ name: path-to-regexp
 version: 6.3.0
 type: npm
 summary: Express style path to RegExp utility
-homepage: 
+homepage:
 license: mit
 licenses:
 - sources: LICENSE

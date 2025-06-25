@@ -71,7 +71,7 @@ jobs:
     strategy:
       matrix:
         python-version: ['3.10', '3.11', '3.12']
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -138,11 +138,11 @@ jobs:
       - name: Install security tools
         run: |
           pip install bandit safety
-          
+
       - name: Run Bandit security scan
         run: |
           bandit -r wade/ -f txt || echo "Security issues found"
-          
+
       - name: Run Safety check
         run: |
           safety check || echo "Dependency vulnerabilities found"

@@ -3,7 +3,7 @@ name: commander
 version: 6.2.1
 type: npm
 summary: the complete solution for node.js command-line programs
-homepage: 
+homepage:
 license: mit
 licenses:
 - sources: LICENSE

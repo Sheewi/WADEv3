@@ -3,7 +3,7 @@ name: ts-poet
 version: 4.15.0
 type: npm
 summary: code generation DSL for TypeScript
-homepage: 
+homepage:
 license: apache-2.0
 licenses:
 - sources: LICENSE.txt

@@ -21,7 +21,7 @@ steps:
 - uses: actions/checkout@v4
 - uses: actions/setup-python@v4
   with:
-    python-version: '3.10' 
+    python-version: '3.10'
 - run: python my_script.py
 ```
 
@@ -29,9 +29,9 @@ steps:
 ```yaml
 steps:
 - uses: actions/checkout@v4
-- uses: actions/setup-python@v4 
+- uses: actions/setup-python@v4
   with:
-    python-version: 'pypy3.9' 
+    python-version: 'pypy3.9'
 - run: python my_script.py
 ```
 The `python-version` input is optional. If not supplied, the action will try to resolve the version from the default `.python-version` file. If the `.python-version` file doesn't exist Python or PyPy version from the PATH will be used. The default version of Python or PyPy in PATH varies between runners and can be changed unexpectedly so we recommend always setting Python version explicitly using the `python-version` or `python-version-file` inputs.
@@ -83,7 +83,7 @@ See examples of using `cache` and `cache-dependency-path` for `pipenv` and `poet
 - [Caching packages](docs/advanced-usage.md#caching-packages)
 - [Outputs and environment variables](docs/advanced-usage.md#outputs-and-environment-variables)
 - [Available versions of Python and PyPy](docs/advanced-usage.md#available-versions-of-python-and-pypy)
-- [Hosted tool cache](docs/advanced-usage.md#hosted-tool-cache) 
+- [Hosted tool cache](docs/advanced-usage.md#hosted-tool-cache)
 - [Using `setup-python` with a self-hosted runner](docs/advanced-usage.md#using-setup-python-with-a-self-hosted-runner)
 - [Using `setup-python` on GHES](docs/advanced-usage.md#using-setup-python-on-ghes)
 - [Allow pre-releases](docs/advanced-usage.md#allow-pre-releases)

@@ -8,7 +8,7 @@ from typing import Dict, List, Any, Optional
 
 # HTML templates for GUI
 HTML_TEMPLATES = {
-    'index': """<!DOCTYPE html>
+    "index": """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -23,7 +23,7 @@ HTML_TEMPLATES = {
             --border-color: #444;
             --hover-color: #333;
         }
-        
+
         body {
             font-family: 'Courier New', monospace;
             background-color: var(--primary-color);
@@ -34,7 +34,7 @@ HTML_TEMPLATES = {
             flex-direction: column;
             height: 100vh;
         }
-        
+
         header {
             background-color: var(--secondary-color);
             padding: 10px 20px;
@@ -43,17 +43,17 @@ HTML_TEMPLATES = {
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .logo {
             font-size: 24px;
             font-weight: bold;
             color: var(--accent-color);
         }
-        
+
         .status {
             font-size: 14px;
         }
-        
+
         .status-indicator {
             display: inline-block;
             width: 10px;
@@ -62,13 +62,13 @@ HTML_TEMPLATES = {
             background-color: var(--accent-color);
             margin-right: 5px;
         }
-        
+
         main {
             display: flex;
             flex: 1;
             overflow: hidden;
         }
-        
+
         .sidebar {
             width: 200px;
             background-color: var(--secondary-color);
@@ -76,35 +76,35 @@ HTML_TEMPLATES = {
             padding: 10px;
             overflow-y: auto;
         }
-        
+
         .sidebar-section {
             margin-bottom: 20px;
         }
-        
+
         .sidebar-title {
             font-size: 16px;
             font-weight: bold;
             margin-bottom: 10px;
             color: var(--accent-color);
         }
-        
+
         .sidebar-item {
             padding: 5px 10px;
             cursor: pointer;
             border-radius: 3px;
         }
-        
+
         .sidebar-item:hover {
             background-color: var(--hover-color);
         }
-        
+
         .content {
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
-        
+
         .output {
             flex: 1;
             padding: 10px;
@@ -112,40 +112,40 @@ HTML_TEMPLATES = {
             background-color: var(--primary-color);
             border-bottom: 1px solid var(--border-color);
         }
-        
+
         .message {
             margin-bottom: 10px;
             padding: 5px;
             border-radius: 3px;
         }
-        
+
         .message-info {
             border-left: 3px solid #3498db;
         }
-        
+
         .message-success {
             border-left: 3px solid #2ecc71;
         }
-        
+
         .message-warning {
             border-left: 3px solid #f39c12;
         }
-        
+
         .message-error {
             border-left: 3px solid #e74c3c;
         }
-        
+
         .message-time {
             font-size: 12px;
             color: #888;
         }
-        
+
         .input-area {
             padding: 10px;
             background-color: var(--secondary-color);
             display: flex;
         }
-        
+
         .input-field {
             flex: 1;
             padding: 8px;
@@ -155,12 +155,12 @@ HTML_TEMPLATES = {
             color: var(--text-color);
             font-family: 'Courier New', monospace;
         }
-        
+
         .input-field:focus {
             outline: none;
             border-color: var(--accent-color);
         }
-        
+
         .send-button {
             margin-left: 10px;
             padding: 8px 15px;
@@ -171,11 +171,11 @@ HTML_TEMPLATES = {
             cursor: pointer;
             font-weight: bold;
         }
-        
+
         .send-button:hover {
             background-color: #00cc00;
         }
-        
+
         footer {
             padding: 5px 10px;
             background-color: var(--secondary-color);
@@ -183,7 +183,7 @@ HTML_TEMPLATES = {
             font-size: 12px;
             text-align: center;
         }
-        
+
         /* Modal */
         .modal {
             display: none;
@@ -195,7 +195,7 @@ HTML_TEMPLATES = {
             height: 100%;
             background-color: rgba(0, 0, 0, 0.7);
         }
-        
+
         .modal-content {
             background-color: var(--secondary-color);
             margin: 10% auto;
@@ -205,7 +205,7 @@ HTML_TEMPLATES = {
             max-width: 600px;
             border-radius: 5px;
         }
-        
+
         .close {
             color: #aaa;
             float: right;
@@ -213,38 +213,38 @@ HTML_TEMPLATES = {
             font-weight: bold;
             cursor: pointer;
         }
-        
+
         .close:hover {
             color: var(--accent-color);
         }
-        
+
         .modal-title {
             margin-top: 0;
             color: var(--accent-color);
         }
-        
+
         /* Tabs */
         .tabs {
             display: flex;
             border-bottom: 1px solid var(--border-color);
         }
-        
+
         .tab {
             padding: 10px 15px;
             cursor: pointer;
             background-color: var(--secondary-color);
         }
-        
+
         .tab.active {
             background-color: var(--primary-color);
             border-bottom: 2px solid var(--accent-color);
         }
-        
+
         .tab-content {
             display: none;
             padding: 10px;
         }
-        
+
         .tab-content.active {
             display: block;
         }
@@ -258,7 +258,7 @@ HTML_TEMPLATES = {
             <span id="status-text">Online</span>
         </div>
     </header>
-    
+
     <main>
         <div class="sidebar">
             <div class="sidebar-section">
@@ -270,7 +270,7 @@ HTML_TEMPLATES = {
                     <div class="sidebar-item">Diplomat</div>
                 </div>
             </div>
-            
+
             <div class="sidebar-section">
                 <div class="sidebar-title">Tools</div>
                 <div id="tool-list">
@@ -281,7 +281,7 @@ HTML_TEMPLATES = {
                 </div>
             </div>
         </div>
-        
+
         <div class="content">
             <div class="output" id="output">
                 <div class="message message-info">
@@ -301,18 +301,18 @@ HTML_TEMPLATES = {
                     <div class="message-content">Failed to load external resources.</div>
                 </div>
             </div>
-            
+
             <div class="input-area">
                 <input type="text" class="input-field" id="input-field" placeholder="Enter command...">
                 <button class="send-button" id="send-button">Send</button>
             </div>
         </div>
     </main>
-    
+
     <footer>
         WADE v1.0.0 | Weaponized Autonomous Deployment Engine
     </footer>
-    
+
     <!-- Modal -->
     <div id="modal" class="modal">
         <div class="modal-content">
@@ -323,11 +323,11 @@ HTML_TEMPLATES = {
             </div>
         </div>
     </div>
-    
+
     <script>
         // Socket.IO connection
         const socket = io();
-        
+
         // DOM elements
         const outputElement = document.getElementById('output');
         const inputField = document.getElementById('input-field');
@@ -337,83 +337,83 @@ HTML_TEMPLATES = {
         const modalClose = document.getElementById('modal-close');
         const modalTitle = document.getElementById('modal-title');
         const modalBody = document.getElementById('modal-body');
-        
+
         // Connect to server
         socket.on('connect', () => {
             addMessage('Connected to WADE server.', 'success');
             statusText.textContent = 'Online';
             document.querySelector('.status-indicator').style.backgroundColor = '#2ecc71';
         });
-        
+
         // Disconnect from server
         socket.on('disconnect', () => {
             addMessage('Disconnected from WADE server.', 'error');
             statusText.textContent = 'Offline';
             document.querySelector('.status-indicator').style.backgroundColor = '#e74c3c';
         });
-        
+
         // Receive message from server
         socket.on('message', (data) => {
             addMessage(data.content, data.level || 'info');
         });
-        
+
         // Send message to server
         function sendMessage() {
             const message = inputField.value.trim();
-            
+
             if (message) {
                 socket.emit('command', { command: message });
                 inputField.value = '';
                 addMessage(`> ${message}`, 'command');
             }
         }
-        
+
         // Add message to output
         function addMessage(content, level = 'info') {
             const messageElement = document.createElement('div');
             messageElement.className = `message message-${level}`;
-            
+
             const timeElement = document.createElement('div');
             timeElement.className = 'message-time';
             timeElement.textContent = new Date().toLocaleTimeString();
-            
+
             const contentElement = document.createElement('div');
             contentElement.className = 'message-content';
             contentElement.textContent = content;
-            
+
             messageElement.appendChild(timeElement);
             messageElement.appendChild(contentElement);
-            
+
             outputElement.appendChild(messageElement);
             outputElement.scrollTop = outputElement.scrollHeight;
         }
-        
+
         // Event listeners
         sendButton.addEventListener('click', sendMessage);
-        
+
         inputField.addEventListener('keypress', (event) => {
             if (event.key === 'Enter') {
                 sendMessage();
             }
         });
-        
+
         modalClose.addEventListener('click', () => {
             modal.style.display = 'none';
         });
-        
+
         window.addEventListener('click', (event) => {
             if (event.target === modal) {
                 modal.style.display = 'none';
             }
         });
-        
+
         // Show modal
         function showModal(title, content) {
             modalTitle.textContent = title;
             modalBody.innerHTML = content;
             modal.style.display = 'block';
         }
-        
+
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             // Add event listeners for sidebar items
@@ -426,8 +426,7 @@ HTML_TEMPLATES = {
     </script>
 </body>
 </html>""",
-
-    'error': """<!DOCTYPE html>
+    "error": """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -445,7 +444,7 @@ HTML_TEMPLATES = {
             align-items: center;
             height: 100vh;
         }
-        
+
         .error-container {
             background-color: #2a2a2a;
             border: 1px solid #444;
@@ -454,17 +453,17 @@ HTML_TEMPLATES = {
             max-width: 600px;
             text-align: center;
         }
-        
+
         .error-title {
             color: #e74c3c;
             font-size: 24px;
             margin-bottom: 10px;
         }
-        
+
         .error-message {
             margin-bottom: 20px;
         }
-        
+
         .error-code {
             font-family: monospace;
             background-color: #1a1a1a;
@@ -473,7 +472,7 @@ HTML_TEMPLATES = {
             margin-bottom: 20px;
             text-align: left;
         }
-        
+
         .back-button {
             display: inline-block;
             padding: 8px 15px;
@@ -482,7 +481,7 @@ HTML_TEMPLATES = {
             text-decoration: none;
             border-radius: 3px;
         }
-        
+
         .back-button:hover {
             background-color: #2980b9;
         }
@@ -496,12 +495,12 @@ HTML_TEMPLATES = {
         <a href="/" class="back-button">Back to Home</a>
     </div>
 </body>
-</html>"""
+</html>""",
 }
 
 # Text templates for CLI
 TEXT_TEMPLATES = {
-    'welcome': """
+    "welcome": """
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                                                                              ║
 ║                  WADE - Weaponized Autonomous Deployment Engine              ║
@@ -517,8 +516,7 @@ Type 'exit' to quit.
 
 {status_message}
 """,
-
-    'help': """
+    "help": """
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                                WADE Help                                     ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
@@ -553,8 +551,7 @@ System Commands:
 
 For more information on a specific command, type 'help <command>'.
 """,
-
-    'status': """
+    "status": """
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                               WADE Status                                    ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
@@ -579,65 +576,69 @@ Network:
   Bandwidth:     {bandwidth}
 
 Last Activity:   {last_activity}
-"""
+""",
 }
+
 
 def get_html_template(template_name: str) -> str:
     """
     Get an HTML template.
-    
+
     Args:
         template_name: Name of the template
-        
+
     Returns:
         HTML template
     """
     return HTML_TEMPLATES.get(template_name, "")
 
+
 def get_text_template(template_name: str) -> str:
     """
     Get a text template.
-    
+
     Args:
         template_name: Name of the template
-        
+
     Returns:
         Text template
     """
     return TEXT_TEMPLATES.get(template_name, "")
 
+
 def render_html_template(template_name: str, **kwargs) -> str:
     """
     Render an HTML template with variables filled in.
-    
+
     Args:
         template_name: Name of the template
         **kwargs: Variables to fill in the template
-        
+
     Returns:
         Rendered HTML template
     """
     template = get_html_template(template_name)
-    
+
     if not template:
         return ""
-    
+
     return template.format(**kwargs)
+
 
 def render_text_template(template_name: str, **kwargs) -> str:
     """
     Render a text template with variables filled in.
-    
+
     Args:
         template_name: Name of the template
         **kwargs: Variables to fill in the template
-        
+
     Returns:
         Rendered text template
     """
     template = get_text_template(template_name)
-    
+
     if not template:
         return ""
-    
+
     return template.format(**kwargs)

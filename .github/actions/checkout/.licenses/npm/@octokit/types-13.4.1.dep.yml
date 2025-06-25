@@ -3,7 +3,7 @@ name: "@octokit/types"
 version: 13.4.1
 type: npm
 summary: Shared TypeScript definitions for Octokit projects
-homepage: 
+homepage:
 license: mit
 licenses:
 - sources: LICENSE

@@ -820,7 +820,7 @@ labels: |
 
 #### `{{branch}}`
 
-Returns the branch name that triggered the workflow run. Will be empty if not 
+Returns the branch name that triggered the workflow run. Will be empty if not
 a branch reference:
 
 | Event          | Ref                    | Output      |
@@ -858,11 +858,11 @@ workflow run. Will be empty for a branch reference:
 | `push`         | `refs/heads/my/branch`        |                    |
 | `push tag`*    | `refs/tags/v1.2.3`            | `master`           |
 
-> *`base_ref` is available in the push payload but doesn't always seem to 
+> *`base_ref` is available in the push payload but doesn't always seem to
 > return the expected branch when the push tag event occurs. It's also
 > [not documented in GitHub docs](https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#push).
 > We keep it for backward compatibility, but it's **not recommended relying on it**.
-> More context in [#192](https://github.com/docker/metadata-action/pull/192#discussion_r854673012). 
+> More context in [#192](https://github.com/docker/metadata-action/pull/192#discussion_r854673012).
 
 #### `{{is_default_branch}}`
 

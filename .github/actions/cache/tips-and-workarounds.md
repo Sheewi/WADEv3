@@ -21,7 +21,7 @@ A cache today is immutable and cannot be updated. But some use cases require the
   ```
 
   Please note that this will create a new cache on every run and hence will consume the cache [quota](./README.md#cache-limits).
-  
+
 ## Use cache across feature branches
 
 Reusing cache across feature branches is not allowed today to provide cache [isolation](https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#restrictions-for-accessing-a-cache). However if both feature branches are from the default branch, a good way to achieve this is to ensure that the default branch has a cache. This cache will then be consumable by both feature branches.
@@ -66,14 +66,14 @@ jobs:
       - name: Cleanup
         run: |
           gh extension install actions/gh-actions-cache
-          
+
           REPO=${{ github.repository }}
           BRANCH=refs/pull/${{ github.event.pull_request.number }}/merge
 
           echo "Fetching list of cache key"
           cacheKeysForPR=$(gh actions-cache list -R $REPO -B $BRANCH | cut -f 1 )
 
-          ## Setting this to not fail the workflow while deleting cache keys. 
+          ## Setting this to not fail the workflow while deleting cache keys.
           set +e
           echo "Deleting caches..."
           for cacheKey in $cacheKeysForPR

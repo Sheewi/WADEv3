@@ -61,12 +61,12 @@ detect_os() {
 # Create user and group
 create_user() {
     log "Creating WADE user and group..."
-    
+
     if ! getent group "$WADE_GROUP" > /dev/null 2>&1; then
         groupadd --system "$WADE_GROUP"
         log "Created group: $WADE_GROUP"
     fi
-    
+
     if ! getent passwd "$WADE_USER" > /dev/null 2>&1; then
         useradd --system --gid "$WADE_GROUP" --home-dir "$WADE_HOME" \
                 --shell /bin/false --comment "WADE Service User" "$WADE_USER"
@@ -77,16 +77,16 @@ create_user() {
 # Create directories
 create_directories() {
     log "Creating WADE directories..."
-    
+
     directories=("$WADE_HOME" "$WADE_CONFIG" "$WADE_LOGS" "$WADE_DATA")
-    
+
     for dir in "${directories[@]}"; do
         if [[ ! -d "$dir" ]]; then
             mkdir -p "$dir"
             log "Created directory: $dir"
         fi
     done
-    
+
     # Set ownership
     chown -R "$WADE_USER:$WADE_GROUP" "$WADE_HOME" "$WADE_LOGS" "$WADE_DATA"
     chown -R root:root "$WADE_CONFIG"
@@ -97,7 +97,7 @@ create_directories() {
 # Install systemd service
 install_systemd_service() {
     log "Installing systemd service..."
-    
+
     cat > /etc/systemd/system/wade.service << 'EOF'
 [Unit]
 Description=WADE - Weaponized Autonomous Deployment Engine
@@ -179,7 +179,7 @@ EOF
 # Install macOS launchd service
 install_launchd_service() {
     log "Installing launchd service..."
-    
+
     cat > /Library/LaunchDaemons/com.wade.service.plist << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -216,14 +216,14 @@ EOF
     # Set permissions
     chown root:wheel /Library/LaunchDaemons/com.wade.service.plist
     chmod 644 /Library/LaunchDaemons/com.wade.service.plist
-    
+
     log "Launchd service installed"
 }
 
 # Install SysV init script
 install_sysv_service() {
     log "Installing SysV init script..."
-    
+
     cat > /etc/init.d/wade << 'EOF'
 #!/bin/bash
 # wade        WADE Service
@@ -242,7 +242,7 @@ start() {
         echo "WADE is already running"
         return 1
     fi
-    
+
     echo -n "Starting $DAEMON: "
     daemon --user "$USER" --pidfile="$LOCK_FILE" \
            "$ROOT_DIR/bin/wade" --config /etc/wade/config.json
@@ -297,7 +297,7 @@ exit $?
 EOF
 
     chmod +x /etc/init.d/wade
-    
+
     # Enable service
     if command -v chkconfig &> /dev/null; then
         chkconfig --add wade
@@ -305,14 +305,14 @@ EOF
     elif command -v update-rc.d &> /dev/null; then
         update-rc.d wade defaults
     fi
-    
+
     log "SysV init script installed"
 }
 
 # Create default configuration
 create_default_config() {
     log "Creating default configuration..."
-    
+
     cat > "$WADE_CONFIG/config.json" << 'EOF'
 {
     "server": {
@@ -370,14 +370,14 @@ EOF
     # Set permissions
     chmod 640 "$WADE_CONFIG"/*.json
     chown root:"$WADE_GROUP" "$WADE_CONFIG"/*.json
-    
+
     log "Default configuration created"
 }
 
 # Create log rotation configuration
 create_logrotate_config() {
     log "Creating log rotation configuration..."
-    
+
     cat > /etc/logrotate.d/wade << 'EOF'
 /var/log/wade/*.log {
     daily
@@ -401,7 +401,7 @@ EOF
 # Enable and start services
 enable_services() {
     log "Enabling and starting WADE services..."
-    
+
     case "$OS" in
         "systemd")
             systemctl enable wade.service
@@ -416,14 +416,14 @@ enable_services() {
             service wade start
             ;;
     esac
-    
+
     log "WADE services enabled and started"
 }
 
 # Create uninstall script
 create_uninstall_script() {
     log "Creating uninstall script..."
-    
+
     cat > "$WADE_HOME/uninstall.sh" << 'EOF'
 #!/bin/bash
 # WADE Uninstall Script
@@ -461,19 +461,19 @@ EOF
 
     chmod +x "$WADE_HOME/uninstall.sh"
     chown root:root "$WADE_HOME/uninstall.sh"
-    
+
     log "Uninstall script created at $WADE_HOME/uninstall.sh"
 }
 
 # Main installation function
 main() {
     log "Starting WADE service installation..."
-    
+
     check_root
     detect_os
     create_user
     create_directories
-    
+
     case "$OS" in
         "systemd")
             install_systemd_service
@@ -485,18 +485,18 @@ main() {
             install_sysv_service
             ;;
     esac
-    
+
     create_default_config
     create_logrotate_config
     create_uninstall_script
-    
+
     log "WADE service installation completed successfully!"
     log "Configuration files are located in: $WADE_CONFIG"
     log "Log files will be written to: $WADE_LOGS"
     log "To uninstall, run: $WADE_HOME/uninstall.sh"
-    
+
     warn "Please update the encryption key in $WADE_CONFIG/config.json before starting services"
-    
+
     # Ask if user wants to start services now
     read -p "Do you want to start WADE services now? (y/N): " -n 1 -r
     echo

@@ -148,7 +148,7 @@ jobs:
 > Google Container Registry. As a fully-managed service with support for both
 > container images and non-container artifacts. If you currently use Google
 > Container Registry, use the information [on this page](https://cloud.google.com/artifact-registry/docs/transition/transition-from-gcr)
-> to learn about transitioning to Google Artifact Registry. 
+> to learn about transitioning to Google Artifact Registry.
 
 You can authenticate with workload identity federation or a service account.
 
@@ -421,7 +421,7 @@ must be placed in format `<tenancy>/<username>` (in case of federated tenancy us
 
 For password [create an auth token](https://www.oracle.com/webfolder/technetwork/tutorials/obe/oci/registry/index.html#GetanAuthToken).
 Save username and token [as a secrets](https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets#creating-encrypted-secrets-for-a-repository)
-in your GitHub repo. 
+in your GitHub repo.
 
 ```yaml
 name: ci

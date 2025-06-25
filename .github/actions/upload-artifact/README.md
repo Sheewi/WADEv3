@@ -209,7 +209,7 @@ For environment variables created in other steps, make sure to use the `env` exp
 
 ```yaml
     steps:
-    - run: | 
+    - run: |
         mkdir testing
         echo "This is a file to upload" > testing/file.txt
         echo "artifactPath=testing/file.txt" >> $GITHUB_ENV
@@ -238,7 +238,7 @@ Artifacts are retained for 90 days by default. You can specify a shorter retenti
 The retention period must be between 1 and 90 inclusive. For more information see [artifact and log retention policies](https://docs.github.com/en/free-pro-team@latest/actions/reference/usage-limits-billing-and-administration#artifact-and-log-retention-policy).
 
 
-### Hidden Files 
+### Hidden Files
 
 By default, hidden files are ignored by this action to avoid unintentionally uploading sensitive information.
 

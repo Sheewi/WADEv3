@@ -8,35 +8,41 @@ from setuptools import setup, find_packages
 import os
 import sys
 
+
 # Read version from version file
 def get_version():
-    version_file = os.path.join('WADE_CORE', 'version.py')
+    version_file = os.path.join("WADE_CORE", "version.py")
     if os.path.exists(version_file):
-        with open(version_file, 'r') as f:
+        with open(version_file, "r") as f:
             content = f.read()
-            for line in content.split('\n'):
-                if line.startswith('__version__'):
-                    return line.split('=')[1].strip().strip('"').strip("'")
+            for line in content.split("\n"):
+                if line.startswith("__version__"):
+                    return line.split("=")[1].strip().strip('"').strip("'")
     return "3.0.0"
+
 
 # Read long description from README
 def get_long_description():
-    readme_path = os.path.join('..', 'README.md')
+    readme_path = os.path.join("..", "README.md")
     if os.path.exists(readme_path):
-        with open(readme_path, 'r', encoding='utf-8') as f:
+        with open(readme_path, "r", encoding="utf-8") as f:
             return f.read()
-    elif os.path.exists('README.md'):
-        with open('README.md', 'r', encoding='utf-8') as f:
+    elif os.path.exists("README.md"):
+        with open("README.md", "r", encoding="utf-8") as f:
             return f.read()
     return "WADE - Weaponized Autonomous Deployment Engine"
 
+
 # Read requirements
 def get_requirements():
-    req_file = 'requirements.txt'
+    req_file = "requirements.txt"
     if os.path.exists(req_file):
-        with open(req_file, 'r') as f:
-            return [line.strip() for line in f if line.strip() and not line.startswith('#')]
+        with open(req_file, "r") as f:
+            return [
+                line.strip() for line in f if line.strip() and not line.startswith("#")
+            ]
     return []
+
 
 setup(
     name="wade",

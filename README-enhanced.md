@@ -32,8 +32,8 @@ The Model Router manages different LLM backends and intelligently routes queries
 ```python
 # Example: Adding a new model to the router
 router.add_model(
-    "mistral-7b", 
-    ModelType.OLLAMA, 
+    "mistral-7b",
+    ModelType.OLLAMA,
     "http://localhost:11434/api/generate",
     {"model": "mistral", "temperature": 0.7},
     ["reasoning", "instruction"],
@@ -42,7 +42,7 @@ router.add_model(
 
 # Example: Routing a query
 model_name = router.select_model(
-    query="Explain how buffer overflows work", 
+    query="Explain how buffer overflows work",
     required_capabilities=["security", "technical"]
 )
 ```

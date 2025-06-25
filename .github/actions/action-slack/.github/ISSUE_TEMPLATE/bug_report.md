@@ -11,7 +11,7 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 **To Reproduce**
-Please describe the yaml of GitHub Actions that we can reproduce.  
+Please describe the yaml of GitHub Actions that we can reproduce.
 Please don't write excerpts as the whole setup will affect the behavior.
 
 **Expected behavior**

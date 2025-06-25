@@ -10,10 +10,11 @@ import json
 import shutil
 from pathlib import Path
 
+
 def create_kali_hook():
     """Create Kali live-build hook for Wade integration"""
-    
-    hook_script = '''#!/bin/bash
+
+    hook_script = """#!/bin/bash
 # Wade CrewAI Kali Integration Hook
 # Place in config/hooks/normal/
 
@@ -112,93 +113,88 @@ echo "ExitPolicy reject *:*" >> /etc/tor/torrc
 echo "wade ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/wade
 
 echo "Wade CrewAI installation complete"
-'''
-    
+"""
+
     return hook_script
+
 
 def create_package_list():
     """Create package list for Kali build"""
-    
+
     packages = [
         # Core system
-        'python3',
-        'python3-pip', 
-        'python3-venv',
-        'curl',
-        'wget',
-        'git',
-        'nodejs',
-        'npm',
-        'build-essential',
-        'libssl-dev',
-        'libffi-dev',
-        
+        "python3",
+        "python3-pip",
+        "python3-venv",
+        "curl",
+        "wget",
+        "git",
+        "nodejs",
+        "npm",
+        "build-essential",
+        "libssl-dev",
+        "libffi-dev",
         # Penetration testing tools
-        'nmap',
-        'metasploit-framework',
-        'sqlmap',
-        'nikto',
-        'dirb',
-        'gobuster',
-        'hydra',
-        'john',
-        'hashcat',
-        'wireshark',
-        'tcpdump',
-        'netcat-traditional',
-        'socat',
-        
+        "nmap",
+        "metasploit-framework",
+        "sqlmap",
+        "nikto",
+        "dirb",
+        "gobuster",
+        "hydra",
+        "john",
+        "hashcat",
+        "wireshark",
+        "tcpdump",
+        "netcat-traditional",
+        "socat",
         # Network tools
-        'proxychains',
-        'tor',
-        'torsocks',
-        'macchanger',
-        'aircrack-ng',
-        'reaver',
-        'hostapd',
-        
+        "proxychains",
+        "tor",
+        "torsocks",
+        "macchanger",
+        "aircrack-ng",
+        "reaver",
+        "hostapd",
         # Forensics tools
-        'steghide',
-        'exiftool',
-        'binwalk',
-        'foremost',
-        'volatility',
-        'autopsy',
-        
+        "steghide",
+        "exiftool",
+        "binwalk",
+        "foremost",
+        "volatility",
+        "autopsy",
         # Development tools
-        'gcc',
-        'g++',
-        'make',
-        'cmake',
-        'gdb',
-        'radare2',
-        'ghidra',
-        
+        "gcc",
+        "g++",
+        "make",
+        "cmake",
+        "gdb",
+        "radare2",
+        "ghidra",
         # Web tools
-        'burpsuite',
-        'zaproxy',
-        'wfuzz',
-        'ffuf',
-        
+        "burpsuite",
+        "zaproxy",
+        "wfuzz",
+        "ffuf",
         # Social engineering
-        'set',
-        'maltego',
-        
+        "set",
+        "maltego",
         # Additional utilities
-        'vim',
-        'tmux',
-        'screen',
-        'htop',
-        'tree',
-        'jq'
+        "vim",
+        "tmux",
+        "screen",
+        "htop",
+        "tree",
+        "jq",
     ]
-    
-    return '\n'.join(packages)
+
+    return "\n".join(packages)
+
 
 def create_preseed():
     """Create preseed configuration for automated installation"""
-    
-    preseed = '''# Wade CrewAI Kali Preseed Configuration
+
+    preseed = """# Wade CrewAI Kali Preseed Configuration
 
 # Locale and keyboard
 d-i debian-installer/locale string en_US.UTF-8
@@ -234,14 +230,15 @@ d-i grub-installer/bootdev string default
 
 # Finish installation
 d-i finish-install/reboot_in_progress note
-'''
-    
+"""
+
     return preseed
+
 
 def create_build_script():
     """Create automated build script for Kali ISO"""
-    
-    build_script = '''#!/bin/bash
+
+    build_script = """#!/bin/bash
 # Wade CrewAI Kali ISO Build Script
 
 set -e
@@ -418,42 +415,43 @@ mv *.log $OUTPUT_DIR/
 echo "Build complete!"
 echo "ISO location: $OUTPUT_DIR"
 ls -la $OUTPUT_DIR/
-'''
-    
+"""
+
     return build_script
+
 
 def main():
     """Main integration function"""
-    
+
     print("Wade CrewAI - Kali Linux Integration")
     print("===================================")
-    
+
     # Create integration files
     integration_dir = Path("kali_integration")
     integration_dir.mkdir(exist_ok=True)
-    
+
     # Create hook script
     hook_file = integration_dir / "01-install-wade-crew-ai.hook.chroot"
-    with open(hook_file, 'w') as f:
+    with open(hook_file, "w") as f:
         f.write(create_kali_hook())
     hook_file.chmod(0o755)
-    
+
     # Create package list
     package_file = integration_dir / "wade-crew-ai.list.chroot"
-    with open(package_file, 'w') as f:
+    with open(package_file, "w") as f:
         f.write(create_package_list())
-    
+
     # Create preseed
     preseed_file = integration_dir / "wade.preseed"
-    with open(preseed_file, 'w') as f:
+    with open(preseed_file, "w") as f:
         f.write(create_preseed())
-    
+
     # Create build script
     build_file = integration_dir / "build_wade_kali.sh"
-    with open(build_file, 'w') as f:
+    with open(build_file, "w") as f:
         f.write(create_build_script())
     build_file.chmod(0o755)
-    
+
     # Create instructions
     instructions = f"""
 Wade CrewAI Kali Integration Files Created
@@ -483,17 +481,18 @@ Boot the ISO and Wade will be available at:
 - Web interface: http://localhost:8080
 - Desktop application: Wade CrewAI
 """
-    
+
     instructions_file = integration_dir / "INTEGRATION_INSTRUCTIONS.txt"
-    with open(instructions_file, 'w') as f:
+    with open(instructions_file, "w") as f:
         f.write(instructions)
-    
+
     print(f"Integration files created in: {integration_dir}")
     print("\nFiles:")
     for file in integration_dir.iterdir():
         print(f"  - {file.name}")
-    
+
     print(f"\nRead {instructions_file} for build instructions")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

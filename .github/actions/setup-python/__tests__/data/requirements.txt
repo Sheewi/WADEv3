@@ -12,6 +12,8 @@ idna==2.9
 
 itsdangerous==1.1.0
 
+kivy==1.11.1
+
 kivy-deps-angle==0.3.0
 
 kivy-deps.glew==0.1.12
@@ -21,8 +23,6 @@ kivy-deps.gstreamer==0.1.17
 kivy-deps.sdl2==0.1.22
 
 kivy-garden==0.1.4
-
-kivy==1.11.1
 
 packaging==21.0
 

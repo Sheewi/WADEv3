@@ -77,7 +77,7 @@ class ContinuousLearner:
     def __init__(self):
         self.model = AutoModelForCausalLM.from_pretrained("phind-codellama")
         self.optimizer = torch.optim.AdamW(self.model.parameters())
-    
+
     def learn_from_interaction(self, input_text, response, feedback):
         # Problems:
         # 1. Real-time gradient updates can destabilize large models
@@ -93,7 +93,7 @@ class ContinuousLearner:
 - Stability issues with continuous gradient updates
 - Memory requirements exceed typical consumer hardware
 
-**Resource Requirements:** 
+**Resource Requirements:**
 - Multiple high-end GPUs (A100s)
 - Distributed training infrastructure
 - Advanced ML engineering expertise
@@ -183,7 +183,7 @@ class ProductionContinuousLearning:
         # 3. Gradient accumulation and synchronization
         # 4. Model versioning and rollback capabilities
         # 5. A/B testing infrastructure for model updates
-        
+
         # Problems:
         # 1. Requires ML engineering team
         # 2. Significant infrastructure costs

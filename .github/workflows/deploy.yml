@@ -24,7 +24,7 @@ jobs:
     name: Deploy to ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -43,13 +43,13 @@ jobs:
         run: |
           echo "Validating deployment to ${{ github.event.inputs.environment }}"
           echo "Version: ${{ github.event.inputs.version }}"
-          
+
           # Check if docker-compose file exists
           if [ ! -f "deploy/docker/compose.yml" ]; then
             echo "❌ Docker compose file not found"
             exit 1
           fi
-          
+
           # Validate compose file
           docker-compose -f deploy/docker/compose.yml config > /dev/null
           echo "✅ Docker compose file is valid"
@@ -58,79 +58,79 @@ jobs:
         if: github.event.inputs.environment == 'staging'
         run: |
           echo "🚀 Deploying to staging environment..."
-          
+
           # Set environment variables for staging
           export VERSION=${{ github.event.inputs.version }}
           export LOG_LEVEL=DEBUG
           export POSTGRES_PASSWORD=staging_password_123
           export REDIS_PASSWORD=staging_redis_123
           export GRAFANA_PASSWORD=staging_grafana_123
-          
+
           # Deploy using docker-compose
           cd deploy/docker
           docker-compose -f compose.yml up -d --build
-          
+
           # Wait for services to be healthy
           echo "⏳ Waiting for services to be healthy..."
           sleep 30
-          
+
           # Check service health
           docker-compose -f compose.yml ps
-          
+
           echo "✅ Staging deployment completed"
 
       - name: Deploy to production
         if: github.event.inputs.environment == 'production'
         run: |
           echo "🚀 Deploying to production environment..."
-          
+
           # Set environment variables for production
           export VERSION=${{ github.event.inputs.version }}
           export LOG_LEVEL=INFO
           export POSTGRES_PASSWORD=${{ secrets.PROD_POSTGRES_PASSWORD }}
           export REDIS_PASSWORD=${{ secrets.PROD_REDIS_PASSWORD }}
           export GRAFANA_PASSWORD=${{ secrets.PROD_GRAFANA_PASSWORD }}
-          
+
           # Deploy using docker-compose
           cd deploy/docker
           docker-compose -f compose.yml up -d --build
-          
+
           # Wait for services to be healthy
           echo "⏳ Waiting for services to be healthy..."
           sleep 60
-          
+
           # Check service health
           docker-compose -f compose.yml ps
-          
+
           # Run health checks
           echo "🔍 Running health checks..."
           curl -f http://localhost:8080/health || exit 1
-          
+
           echo "✅ Production deployment completed"
 
       - name: Post-deployment verification
         run: |
           echo "🔍 Running post-deployment verification..."
-          
+
           # Check if main service is responding
           timeout 60 bash -c 'until curl -f http://localhost:8080/health; do sleep 5; done'
-          
+
           # Check if dashboard is accessible
           timeout 60 bash -c 'until curl -f http://localhost:8081/health; do sleep 5; done'
-          
+
           # Check if monitoring is working
           timeout 60 bash -c 'until curl -f http://localhost:9091/-/healthy; do sleep 5; done'
-          
+
           echo "✅ All services are healthy and responding"
 
       - name: Rollback on failure
         if: failure()
         run: |
           echo "❌ Deployment failed, initiating rollback..."
-          
+
           cd deploy/docker
           docker-compose -f compose.yml down
-          
+
           echo "🔄 Rollback completed"
 
       - name: Notify deployment status

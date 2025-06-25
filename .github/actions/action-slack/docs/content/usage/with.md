@@ -87,13 +87,13 @@ steps:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
 ```
 
-If you want to mention a user group, you need to add "subteam^" before user group id. 
+If you want to mention a user group, you need to add "subteam^" before user group id.
 
 ```yaml
 steps:
   - uses: 8398a7/action-slack@v3
     with:
-      mention: 'subteam^S012ABC3Y4Z' # replace S012ABC3Y4Z with your user group id 
+      mention: 'subteam^S012ABC3Y4Z' # replace S012ABC3Y4Z with your user group id
       if_mention: 'failure,cancelled'
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
@@ -199,7 +199,7 @@ See here for `custom_payload` reference.
 
 ### job_name
 
-In the action-slack, there are arguments to get the information about the job.  
+In the action-slack, there are arguments to get the information about the job.
 They are retrieved from the job name and will not work if the job name is overwritten.
 
 If you want to rename a job and get information about it, give the job a `job_name`.

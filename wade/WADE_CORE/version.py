@@ -30,9 +30,11 @@ FEATURES = {
     "ci_cd_pipeline": True,
 }
 
+
 def get_version():
     """Get the current version string."""
     return __version__
+
 
 def get_version_info():
     """Get detailed version information."""
@@ -45,12 +47,14 @@ def get_version_info():
         "features": FEATURES,
     }
 
+
 def print_version():
     """Print version information."""
     print(f"WADE {__version__} ({__codename__})")
     print(f"Build: {__build__}")
     print(f"Release Date: {__release_date__}")
     print(f"Features: {', '.join([k for k, v in FEATURES.items() if v])}")
+
 
 if __name__ == "__main__":
     print_version()

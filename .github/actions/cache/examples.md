@@ -266,7 +266,7 @@ We cache the elements of the Cabal store separately, as the entirety of `~/.caba
   with:
     path: |
       ~\AppData\Roaming\stack
-      ~\AppData\Local\Programs\stack    
+      ~\AppData\Local\Programs\stack
     key: ${{ runner.os }}-stack-global-${{ hashFiles('stack.yaml') }}-${{ hashFiles('package.yaml') }}
     restore-keys: |
       ${{ runner.os }}-stack-global-

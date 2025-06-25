@@ -3,7 +3,7 @@ name: twirp-ts
 version: 2.5.0
 type: npm
 summary: Typescript implementation of the Twirp protocol
-homepage: 
+homepage:
 license: mit
 licenses:
 - sources: README.md

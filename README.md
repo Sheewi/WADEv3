@@ -7,10 +7,10 @@
 
 **Production-Ready Advanced AI Agent Framework**
 
-WADE is a sophisticated multi-agent AI framework designed for security professionals, penetration testers, and researchers. Built with enterprise-grade security, monitoring, and scalability features.
+WADE is a sophisticated multi-agent AI framework designed for security professionals, and researchers. Built with enterprise-grade security, monitoring, and scalability features.
 
 ## 🚨 DISCLAIMER
-WADE is designed for security professionals, penetration testers, and researchers. Use responsibly and only on systems you own or have explicit permission to test. The developers are not responsible for misuse.
+WADE is designed for security professionals, and researchers. Use responsibly and only on systems you own or have explicit permission to test. The developers are not responsible for misuse.
 
 ## ✨ Key Features
 
@@ -116,7 +116,6 @@ pytest tests/ --cov=wade --cov-report=term-missing
 # Run performance benchmarks
 pytest tests/ --benchmark-only
 ```
-- **Exploit Developer** - Creates working exploits and payloads
 - **Tool Builder** - Builds custom security tools and scripts
 - **System Administrator** - System integration and command execution
 - **Intelligence Researcher** - Advanced research and dark web access
@@ -347,7 +346,7 @@ def create_custom_agent(self) -> Agent:
 class CustomTool(BaseTool):
     name: str = "Custom Tool"
     description: str = "Tool description"
-    
+
     def _run(self, input: str) -> str:
         # Tool implementation
         return result

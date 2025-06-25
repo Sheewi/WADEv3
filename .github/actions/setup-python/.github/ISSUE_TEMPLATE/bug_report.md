@@ -28,7 +28,7 @@ Specify the action version
 **Tools version:**
 <!--- Please list all of the affected Python versions (`3.8.2`, etc.)-->
 
-**Repro steps:**  
+**Repro steps:**
 A description with steps to reproduce the issue. If your have a public example or repo to share, please provide the link.
 
 **Expected behavior:**

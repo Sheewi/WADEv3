@@ -297,7 +297,7 @@ steps:
   - name: Install Dependencies
     if: steps.cache.outputs.cache-hit != 'true'
     run: ./install.sh
-      
+
   - name: Build
     run: ./build-child-module.sh
 

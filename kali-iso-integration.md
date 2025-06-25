@@ -67,7 +67,7 @@ cat > /etc/skel/.simple-wade/web/index.html << 'EOF'
       background-color: #1e1e1e;
       color: #f0f0f0;
     }
-    
+
     .container {
       max-width: 800px;
       margin: 0 auto;
@@ -76,12 +76,12 @@ cat > /etc/skel/.simple-wade/web/index.html << 'EOF'
       padding: 20px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-    
+
     h1 {
       color: #ff5722;
       text-align: center;
     }
-    
+
     .chat-container {
       height: 400px;
       overflow-y: auto;
@@ -91,12 +91,12 @@ cat > /etc/skel/.simple-wade/web/index.html << 'EOF'
       margin-bottom: 20px;
       background-color: #333;
     }
-    
+
     .input-container {
       display: flex;
       gap: 10px;
     }
-    
+
     .input-field {
       flex: 1;
       padding: 10px;
@@ -105,7 +105,7 @@ cat > /etc/skel/.simple-wade/web/index.html << 'EOF'
       background-color: #333;
       color: white;
     }
-    
+
     .send-button {
       padding: 10px 20px;
       background-color: #ff5722;
@@ -114,31 +114,31 @@ cat > /etc/skel/.simple-wade/web/index.html << 'EOF'
       border-radius: 5px;
       cursor: pointer;
     }
-    
+
     .send-button:hover {
       background-color: #e64a19;
     }
-    
+
     .message {
       margin-bottom: 10px;
       padding: 10px;
       border-radius: 5px;
     }
-    
+
     .user-message {
       background-color: #0b93f6;
       color: white;
       align-self: flex-end;
       margin-left: 20%;
     }
-    
+
     .assistant-message {
       background-color: #444;
       color: white;
       align-self: flex-start;
       margin-right: 20%;
     }
-    
+
     .code-block {
       background-color: #1e1e1e;
       padding: 10px;
@@ -147,7 +147,7 @@ cat > /etc/skel/.simple-wade/web/index.html << 'EOF'
       white-space: pre-wrap;
       margin: 10px 0;
     }
-    
+
     .system-message {
       color: #888;
       font-style: italic;
@@ -159,46 +159,46 @@ cat > /etc/skel/.simple-wade/web/index.html << 'EOF'
 <body>
   <div class="container">
     <h1>Simple Wade - Phind with OpenHands</h1>
-    
+
     <div class="chat-container" id="chat-container">
       <div class="system-message">System initialized. Ready to assist.</div>
     </div>
-    
+
     <div class="input-container">
       <input type="text" class="input-field" id="input-field" placeholder="Type your message...">
       <button class="send-button" id="send-button">Send</button>
     </div>
   </div>
-  
+
   <script>
     const chatContainer = document.getElementById('chat-container');
     const inputField = document.getElementById('input-field');
     const sendButton = document.getElementById('send-button');
-    
+
     // Add message to chat
     function addMessage(text, sender) {
       const messageDiv = document.createElement('div');
       messageDiv.classList.add('message');
       messageDiv.classList.add(sender === 'user' ? 'user-message' : 'assistant-message');
-      
+
       // Process markdown-like formatting
       let processedText = text;
-      
+
       // Code blocks
       processedText = processedText.replace(/```([^`]+)```/g, (match, code) => {
         return `<div class="code-block">${code}</div>`;
       });
-      
+
       // Inline code
       processedText = processedText.replace(/`([^`]+)`/g, (match, code) => {
         return `<code>${code}</code>`;
       });
-      
+
       messageDiv.innerHTML = processedText;
       chatContainer.appendChild(messageDiv);
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
-    
+
     // Add system message
     function addSystemMessage(text) {
       const messageDiv = document.createElement('div');
@@ -207,21 +207,21 @@ cat > /etc/skel/.simple-wade/web/index.html << 'EOF'
       chatContainer.appendChild(messageDiv);
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
-    
+
     // Send message to backend
     async function sendMessage() {
       const message = inputField.value.trim();
       if (!message) return;
-      
+
       // Add user message to chat
       addMessage(message, 'user');
-      
+
       // Clear input field
       inputField.value = '';
-      
+
       // Add typing indicator
       addSystemMessage('Thinking...');
-      
+
       try {
         // Send to backend
         const response = await fetch('/api/query', {
@@ -231,32 +231,32 @@ cat > /etc/skel/.simple-wade/web/index.html << 'EOF'
           },
           body: JSON.stringify({ prompt: message })
         });
-        
+
         const data = await response.json();
-        
+
         // Remove typing indicator
         chatContainer.removeChild(chatContainer.lastChild);
-        
+
         // Add assistant response
         addMessage(data.response, 'assistant');
       } catch (error) {
         // Remove typing indicator
         chatContainer.removeChild(chatContainer.lastChild);
-        
+
         // Add error message
         addSystemMessage(`Error: ${error.message}`);
       }
     }
-    
+
     // Event listeners
     sendButton.addEventListener('click', sendMessage);
-    
+
     inputField.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         sendMessage();
       }
     });
-    
+
     // Focus input field on load
     window.addEventListener('load', () => {
       inputField.focus();
@@ -286,7 +286,7 @@ def index():
 def query():
     data = request.json
     prompt = data.get('prompt', '')
-    
+
     try:
         # Query Ollama
         response = requests.post('http://localhost:11434/api/generate', json={
@@ -294,7 +294,7 @@ def query():
             'prompt': prompt,
             'stream': False
         })
-        
+
         result = response.json()
         return jsonify({'response': result.get('response', 'No response')})
     except Exception as e:

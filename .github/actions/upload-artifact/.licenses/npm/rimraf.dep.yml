@@ -3,7 +3,7 @@ name: rimraf
 version: 3.0.2
 type: npm
 summary: A deep deletion module for node (like `rm -rf`)
-homepage: 
+homepage:
 license: isc
 licenses:
 - sources: LICENSE

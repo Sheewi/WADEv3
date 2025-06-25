@@ -14,7 +14,7 @@
 - [Available versions of Python and PyPy](advanced-usage.md#available-versions-of-python-and-pypy)
     - [Python](advanced-usage.md#python)
     - [PyPy](advanced-usage.md#pypy)
-- [Hosted tool cache](advanced-usage.md#hosted-tool-cache) 
+- [Hosted tool cache](advanced-usage.md#hosted-tool-cache)
 - [Using `setup-python` with a self-hosted runner](advanced-usage.md#using-setup-python-with-a-self-hosted-runner)
     - [Windows](advanced-usage.md#windows)
     - [Linux](advanced-usage.md#linux)
@@ -33,7 +33,7 @@ steps:
 - uses: actions/checkout@v4
 - uses: actions/setup-python@v4
   with:
-    python-version: '3.7.5' 
+    python-version: '3.7.5'
 - run: python my_script.py
 ```
 
@@ -47,7 +47,7 @@ steps:
 - uses: actions/checkout@v4
 - uses: actions/setup-python@v4
   with:
-    python-version: '3.7' 
+    python-version: '3.7'
 - run: python my_script.py
 ```
 - There will be a single patch version already installed on each runner for every minor version of Python that is supported.
@@ -146,7 +146,7 @@ jobs:
 More details on PyPy syntax can be found in the [Available versions of PyPy](#pypy) section.
 
 ### Specifying multiple Python/PyPy version
-The python-version input can get multiple python/pypy versions. The last specified version will be used as a default one. 
+The python-version input can get multiple python/pypy versions. The last specified version will be used as a default one.
 
 Download and set up multiple Python versions:
 
@@ -380,7 +380,7 @@ steps:
 
 ### `python-version`
 
-Using **python-version** output it's possible to get the installed by action Python or PyPy version. This output is useful when the input `python-version` is given as a range (e.g. 3.8.0 - 3.10.0 ), but down in a workflow you need to operate with the exact installed version (e.g. 3.10.1). 
+Using **python-version** output it's possible to get the installed by action Python or PyPy version. This output is useful when the input `python-version` is given as a range (e.g. 3.8.0 - 3.10.0 ), but down in a workflow you need to operate with the exact installed version (e.g. 3.10.1).
 
 ```yaml
 jobs:
@@ -546,11 +546,11 @@ One quick way to grant access is to change the user and group of the non-default
 ### macOS
 
  The Python packages for macOS that are downloaded from `actions/python-versions` are originally compiled from the source in `/Users/runner/hostedtoolcache`. Due to the fixed shared library path, these Python packages are non-relocatable and require to be installed only in `/Users/runner/hostedtoolcache`. Before the use of `setup-python` on the macOS self-hosted runner:
- 
+
  - Create a directory called `/Users/runner/hostedtoolcache`
  - Change the permissions of `/Users/runner/hostedtoolcache` so that the runner has write access
 
-You can check the current user and group that the runner belongs to by typing `ls -l` inside the runner's root directory.        
+You can check the current user and group that the runner belongs to by typing `ls -l` inside the runner's root directory.
 The runner can be granted write access to the `/Users/runner/hostedtoolcache` directory using a few techniques:
  - The user starting the runner is the owner, and the owner has write permission
  - The user starting the runner is in the owning group, and the owning group has write permission
@@ -566,7 +566,7 @@ One quick way to grant access is to change the user and group of `/Users/runner/
 
 ### Avoiding rate limit issues
 
-`setup-python` comes pre-installed on the appliance with GHES if Actions is enabled. When dynamically downloading Python distributions, `setup-python` downloads distributions from [`actions/python-versions`](https://github.com/actions/python-versions) on github.com (outside of the appliance). These calls to `actions/python-versions` are by default made via unauthenticated requests, which are limited to [60 requests per hour per IP](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting). If more requests are made within the time frame, then you will start to see rate-limit errors during downloading that look like this: 
+`setup-python` comes pre-installed on the appliance with GHES if Actions is enabled. When dynamically downloading Python distributions, `setup-python` downloads distributions from [`actions/python-versions`](https://github.com/actions/python-versions) on github.com (outside of the appliance). These calls to `actions/python-versions` are by default made via unauthenticated requests, which are limited to [60 requests per hour per IP](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting). If more requests are made within the time frame, then you will start to see rate-limit errors during downloading that look like this:
 
     ##[error]API rate limit exceeded for YOUR_IP. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)
 
@@ -618,4 +618,3 @@ jobs:
           allow-prereleases: true
       - run: pipx run nox --error-on-missing-interpreters -s tests-${{ matrix.python_version }}
 ```
-

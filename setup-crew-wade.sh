@@ -71,17 +71,17 @@ llm = Ollama(model="phind-codellama")
 
 class WadeAgentSystem:
     """Wade multi-agent system using Crew AI framework"""
-    
+
     def __init__(self):
         """Initialize the Wade agent system"""
         self.llm = llm
         self.agents = self._create_agents()
         self.tools = self._create_tools()
         self.crew = self._create_crew()
-        
+
     def _create_agents(self) -> Dict[str, Agent]:
         """Create specialized agents for different tasks"""
-        
+
         # Hacking specialist agent
         hacker = Agent(
             role="Offensive Security Specialist",
@@ -91,7 +91,7 @@ class WadeAgentSystem:
             llm=self.llm,
             allow_delegation=True
         )
-        
+
         # Defensive security agent
         defender = Agent(
             role="Defensive Security Specialist",
@@ -101,7 +101,7 @@ class WadeAgentSystem:
             llm=self.llm,
             allow_delegation=True
         )
-        
+
         # Research agent
         researcher = Agent(
             role="Intelligence Researcher",
@@ -111,7 +111,7 @@ class WadeAgentSystem:
             llm=self.llm,
             allow_delegation=True
         )
-        
+
         # System customization agent
         customizer = Agent(
             role="System Customization Specialist",
@@ -121,7 +121,7 @@ class WadeAgentSystem:
             llm=self.llm,
             allow_delegation=True
         )
-        
+
         # Tool development agent
         developer = Agent(
             role="Tool Developer",
@@ -131,7 +131,7 @@ class WadeAgentSystem:
             llm=self.llm,
             allow_delegation=True
         )
-        
+
         # Learning and improvement agent
         learner = Agent(
             role="Continuous Learning Specialist",
@@ -141,7 +141,7 @@ class WadeAgentSystem:
             llm=self.llm,
             allow_delegation=True
         )
-        
+
         return {
             "hacker": hacker,
             "defender": defender,
@@ -150,13 +150,13 @@ class WadeAgentSystem:
             "developer": developer,
             "learner": learner
         }
-    
+
     def _create_tools(self) -> Dict[str, List[Tool]]:
         """Create tools for the agents to use"""
-        
+
         # Basic tools available to all agents
         basic_tools = load_tools(["terminal", "human"])
-        
+
         # Specialized tools for each agent type
         hacker_tools = basic_tools + load_tools(["nmap_scan", "metasploit"])
         defender_tools = basic_tools + load_tools(["snort_alert", "firewall_config"])
@@ -164,7 +164,7 @@ class WadeAgentSystem:
         customizer_tools = basic_tools + load_tools(["file_editor", "package_manager"])
         developer_tools = basic_tools + load_tools(["code_interpreter", "git"])
         learner_tools = basic_tools + load_tools(["memory_store", "model_trainer"])
-        
+
         return {
             "hacker": hacker_tools,
             "defender": defender_tools,
@@ -173,7 +173,7 @@ class WadeAgentSystem:
             "developer": developer_tools,
             "learner": learner_tools
         }
-    
+
     def _create_crew(self) -> Crew:
         """Create the crew with all agents"""
         return Crew(
@@ -182,52 +182,52 @@ class WadeAgentSystem:
             verbose=2,
             process=Process.sequential
         )
-    
+
     def _create_tasks(self) -> List[Task]:
         """Create tasks for the crew"""
-        
+
         # Task for the hacker agent
         hacking_task = Task(
             description="Identify potential vulnerabilities in the target system",
             expected_output="A detailed report of vulnerabilities with severity ratings",
             agent=self.agents["hacker"]
         )
-        
+
         # Task for the defender agent
         defense_task = Task(
             description="Recommend security measures to protect against identified vulnerabilities",
             expected_output="A comprehensive security plan with specific configurations",
             agent=self.agents["defender"]
         )
-        
+
         # Task for the researcher agent
         research_task = Task(
             description="Gather intelligence on the latest security threats and techniques",
             expected_output="An intelligence report with actionable insights",
             agent=self.agents["researcher"]
         )
-        
+
         # Task for the customizer agent
         customization_task = Task(
             description="Create a personalized desktop environment with the Vin Diesel theme",
             expected_output="Configuration files and scripts for the custom environment",
             agent=self.agents["customizer"]
         )
-        
+
         # Task for the developer agent
         development_task = Task(
             description="Develop a custom tool for automating repetitive security tasks",
             expected_output="A working script or application with documentation",
             agent=self.agents["developer"]
         )
-        
+
         # Task for the learner agent
         learning_task = Task(
             description="Analyze user interactions to improve system responses",
             expected_output="A learning report with suggestions for model improvements",
             agent=self.agents["learner"]
         )
-        
+
         return [
             hacking_task,
             defense_task,
@@ -236,19 +236,19 @@ class WadeAgentSystem:
             development_task,
             learning_task
         ]
-    
+
     async def run(self, query: str) -> Dict[str, Any]:
         """Run the crew to process a user query"""
         # Determine which agent should handle the query
         handling_agent = self._route_query(query)
-        
+
         # Create a specific task for this query
         task = Task(
             description=f"Process the following user query: {query}",
             expected_output="A comprehensive response addressing the user's needs",
             agent=self.agents[handling_agent]
         )
-        
+
         # Create a temporary crew with just this task
         temp_crew = Crew(
             agents=[self.agents[handling_agent]],
@@ -256,7 +256,7 @@ class WadeAgentSystem:
             verbose=2,
             process=Process.sequential
         )
-        
+
         # Run the crew and return the result
         result = await temp_crew.run()
         return {
@@ -268,12 +268,12 @@ class WadeAgentSystem:
                 "agents_consulted": [handling_agent]
             }
         }
-    
+
     def _route_query(self, query: str) -> str:
         """Determine which agent should handle a query"""
         # Simple keyword-based routing for demonstration
         query = query.lower()
-        
+
         if any(word in query for word in ["hack", "exploit", "vulnerability", "penetration"]):
             return "hacker"
         elif any(word in query for word in ["protect", "defend", "secure", "firewall"]):
@@ -328,14 +328,14 @@ def index():
 def query():
     data = request.json
     prompt = data.get('prompt', '')
-    
+
     try:
         # Process with Crew AI
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         result = loop.run_until_complete(wade_system.run(prompt))
         loop.close()
-        
+
         return jsonify(result)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -401,12 +401,12 @@ cat > ~/.wade/interface/index.html << 'EOF'
       color: #f0f0f0;
       overflow: hidden;
     }
-    
+
     .container {
       display: flex;
       height: 100vh;
     }
-    
+
     .sidebar {
       width: 250px;
       background-color: #252525;
@@ -415,37 +415,37 @@ cat > ~/.wade/interface/index.html << 'EOF'
       display: flex;
       flex-direction: column;
     }
-    
+
     .main-content {
       flex: 1;
       display: flex;
       flex-direction: column;
       padding: 20px;
     }
-    
+
     .header {
       display: flex;
       align-items: center;
       margin-bottom: 20px;
     }
-    
+
     .logo {
       font-size: 24px;
       font-weight: bold;
       color: #ff5722;
       margin-right: 10px;
     }
-    
+
     .subtitle {
       font-size: 14px;
       color: #aaa;
     }
-    
+
     .agent-list {
       flex: 1;
       overflow-y: auto;
     }
-    
+
     .agent-item {
       padding: 10px;
       margin-bottom: 5px;
@@ -453,25 +453,25 @@ cat > ~/.wade/interface/index.html << 'EOF'
       cursor: pointer;
       transition: background-color 0.2s;
     }
-    
+
     .agent-item:hover {
       background-color: #333;
     }
-    
+
     .agent-item.active {
       background-color: #444;
     }
-    
+
     .agent-name {
       font-weight: bold;
       margin-bottom: 5px;
     }
-    
+
     .agent-description {
       font-size: 12px;
       color: #aaa;
     }
-    
+
     .chat-container {
       flex: 1;
       overflow-y: auto;
@@ -481,12 +481,12 @@ cat > ~/.wade/interface/index.html << 'EOF'
       margin-bottom: 20px;
       background-color: #333;
     }
-    
+
     .input-container {
       display: flex;
       gap: 10px;
     }
-    
+
     .input-field {
       flex: 1;
       padding: 10px;
@@ -495,7 +495,7 @@ cat > ~/.wade/interface/index.html << 'EOF'
       background-color: #333;
       color: white;
     }
-    
+
     .send-button {
       padding: 10px 20px;
       background-color: #ff5722;
@@ -504,31 +504,31 @@ cat > ~/.wade/interface/index.html << 'EOF'
       border-radius: 5px;
       cursor: pointer;
     }
-    
+
     .send-button:hover {
       background-color: #e64a19;
     }
-    
+
     .message {
       margin-bottom: 10px;
       padding: 10px;
       border-radius: 5px;
     }
-    
+
     .user-message {
       background-color: #0b93f6;
       color: white;
       align-self: flex-end;
       margin-left: 20%;
     }
-    
+
     .assistant-message {
       background-color: #444;
       color: white;
       align-self: flex-start;
       margin-right: 20%;
     }
-    
+
     .code-block {
       background-color: #1e1e1e;
       padding: 10px;
@@ -537,14 +537,14 @@ cat > ~/.wade/interface/index.html << 'EOF'
       white-space: pre-wrap;
       margin: 10px 0;
     }
-    
+
     .system-message {
       color: #888;
       font-style: italic;
       text-align: center;
       margin: 10px 0;
     }
-    
+
     .agent-tag {
       display: inline-block;
       padding: 2px 5px;
@@ -554,7 +554,7 @@ cat > ~/.wade/interface/index.html << 'EOF'
       font-size: 10px;
       margin-right: 5px;
     }
-    
+
     .status-bar {
       display: flex;
       justify-content: space-between;
@@ -573,65 +573,65 @@ cat > ~/.wade/interface/index.html << 'EOF'
         <div class="logo">WADE</div>
         <div class="subtitle">Multi-Agent System</div>
       </div>
-      
+
       <div class="agent-list" id="agent-list">
         <!-- Agent list will be populated dynamically -->
         <div class="system-message">Loading agents...</div>
       </div>
-      
+
       <div class="status-bar">
         <div>Phind-CodeLlama</div>
         <div>Crew AI v1.0</div>
       </div>
     </div>
-    
+
     <div class="main-content">
       <div class="chat-container" id="chat-container">
         <div class="system-message">System initialized. Ready to assist.</div>
         <div class="system-message">I'm Wade, your multi-agent AI assistant powered by Crew AI and Phind-CodeLlama.</div>
         <div class="system-message">How can I help you today?</div>
       </div>
-      
+
       <div class="input-container">
         <input type="text" class="input-field" id="input-field" placeholder="Type your message...">
         <button class="send-button" id="send-button">Send</button>
       </div>
     </div>
   </div>
-  
+
   <script>
     const chatContainer = document.getElementById('chat-container');
     const inputField = document.getElementById('input-field');
     const sendButton = document.getElementById('send-button');
     const agentList = document.getElementById('agent-list');
-    
+
     // Load agents
     async function loadAgents() {
       try {
         const response = await fetch('/api/agents');
         const data = await response.json();
-        
+
         // Clear loading message
         agentList.innerHTML = '';
-        
+
         // Add agents to the list
         data.agents.forEach(agent => {
           const agentItem = document.createElement('div');
           agentItem.classList.add('agent-item');
           agentItem.dataset.agentId = agent.id;
-          
+
           const agentName = document.createElement('div');
           agentName.classList.add('agent-name');
           agentName.textContent = agent.name;
-          
+
           const agentDescription = document.createElement('div');
           agentDescription.classList.add('agent-description');
           agentDescription.textContent = agent.description;
-          
+
           agentItem.appendChild(agentName);
           agentItem.appendChild(agentDescription);
           agentList.appendChild(agentItem);
-          
+
           // Add click event to filter by agent
           agentItem.addEventListener('click', () => {
             document.querySelectorAll('.agent-item').forEach(item => {
@@ -645,13 +645,13 @@ cat > ~/.wade/interface/index.html << 'EOF'
         agentList.innerHTML = `<div class="system-message">Error loading agents: ${error.message}</div>`;
       }
     }
-    
+
     // Add message to chat
     function addMessage(text, sender, agent = null) {
       const messageDiv = document.createElement('div');
       messageDiv.classList.add('message');
       messageDiv.classList.add(sender === 'user' ? 'user-message' : 'assistant-message');
-      
+
       // Add agent tag if provided
       if (agent && sender !== 'user') {
         const agentTag = document.createElement('span');
@@ -659,28 +659,28 @@ cat > ~/.wade/interface/index.html << 'EOF'
         agentTag.textContent = agent;
         messageDiv.appendChild(agentTag);
       }
-      
+
       // Process markdown-like formatting
       let processedText = text;
-      
+
       // Code blocks
       processedText = processedText.replace(/```([^`]+)```/g, (match, code) => {
         return `<div class="code-block">${code}</div>`;
       });
-      
+
       // Inline code
       processedText = processedText.replace(/`([^`]+)`/g, (match, code) => {
         return `<code>${code}</code>`;
       });
-      
+
       const contentDiv = document.createElement('div');
       contentDiv.innerHTML = processedText;
       messageDiv.appendChild(contentDiv);
-      
+
       chatContainer.appendChild(messageDiv);
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
-    
+
     // Add system message
     function addSystemMessage(text) {
       const messageDiv = document.createElement('div');
@@ -689,21 +689,21 @@ cat > ~/.wade/interface/index.html << 'EOF'
       chatContainer.appendChild(messageDiv);
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
-    
+
     // Send message to backend
     async function sendMessage() {
       const message = inputField.value.trim();
       if (!message) return;
-      
+
       // Add user message to chat
       addMessage(message, 'user');
-      
+
       // Clear input field
       inputField.value = '';
-      
+
       // Add typing indicator
       addSystemMessage('Thinking...');
-      
+
       try {
         // Send to backend
         const response = await fetch('/api/query', {
@@ -713,32 +713,32 @@ cat > ~/.wade/interface/index.html << 'EOF'
           },
           body: JSON.stringify({ prompt: message })
         });
-        
+
         const data = await response.json();
-        
+
         // Remove typing indicator
         chatContainer.removeChild(chatContainer.lastChild);
-        
+
         // Add assistant response
         addMessage(data.response, 'assistant', data.agent);
       } catch (error) {
         // Remove typing indicator
         chatContainer.removeChild(chatContainer.lastChild);
-        
+
         // Add error message
         addSystemMessage(`Error: ${error.message}`);
       }
     }
-    
+
     // Event listeners
     sendButton.addEventListener('click', sendMessage);
-    
+
     inputField.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         sendMessage();
       }
     });
-    
+
     // Focus input field on load
     window.addEventListener('load', () => {
       inputField.focus();

@@ -16,8 +16,8 @@ steps:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
 ```
 
-If the selection is done automatically, it will also show fields that the user thought were unnecessary.  
-From v3, fields not explicitly specified by the user will not be displayed.  
+If the selection is done automatically, it will also show fields that the user thought were unnecessary.
+From v3, fields not explicitly specified by the user will not be displayed.
 If you want the behavior to be the same as v2, please specify the following.
 
 ```yaml
@@ -32,11 +32,11 @@ steps:
 
 ## Overwriting text
 
-Until v2, a fixed statement (success/failure/cancel) was inserted for each status.  
+Until v2, a fixed statement (success/failure/cancel) was inserted for each status.
 This means that even if the user specifies `text`, a fixed sentence is given at the beginning.
 
-From v3, if text is specified, it will remove the fixed sentence and completely overwrite it.  
-For example, in v2, ":white_check_mark: Succeeded GitHub Actions" was fixed on a successful job.  
+From v3, if text is specified, it will remove the fixed sentence and completely overwrite it.
+For example, in v2, ":white_check_mark: Succeeded GitHub Actions" was fixed on a successful job.
 If a user wants to change :white_check_mark: to a different emoji, it will still be fixed, but from v3 it will be completely overwritten, which eliminates this problem.
 
 ## Change the way Mentions are set up
@@ -48,10 +48,10 @@ In v2, there are two features for Mentions.
 - only_mention_fail
   - Mentions are only made when the job fails.
 
-In v3, it will be changed to `mention` and `if_mention`.  
+In v3, it will be changed to `mention` and `if_mention`.
 This change is intended to consolidate the roles, as the existing method of mentoring was close to the roles and was a confusing feature.
 
-`if_mention` specifies the state to fire, and `mention` specifies the target partner.  
+`if_mention` specifies the state to fire, and `mention` specifies the target partner.
 See [With Parameters](/with) for the other states that can be specified by `if_mention`.
 
 ### Migrate mention
@@ -112,7 +112,7 @@ steps:
 
 ## Abolition of payload
 
-`payload` has been changed to `custom_payload`.  
+`payload` has been changed to `custom_payload`.
 The `payload` will change to have a reserved word role in GitHub Actions.
 
 If you have set the following in v2
