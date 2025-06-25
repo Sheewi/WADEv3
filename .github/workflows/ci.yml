@@ -93,7 +93,9 @@ jobs:
           pip install --upgrade pip
           pip install pytest pytest-cov pytest-xdist pytest-mock
           # Install essential dependencies first
-          pip install jsonschema pyyaml python-dotenv pydantic cryptography psutil
+          pip install jsonschema pyyaml python-dotenv pydantic cryptography psutil pyjwt bcrypt
+          # Install wade-specific requirements first
+          pip install -r wade/requirements.txt || echo "Wade requirements installation failed"
           # Try to install all dependencies, fallback to essential ones if needed
           pip install -r requirements.txt || {
             echo "Full requirements installation failed, installing remaining essential packages..."
