@@ -39,10 +39,12 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install black isort flake8 pytest pytest-cov
+          # Install essential dependencies first
+          pip install jsonschema pyyaml python-dotenv pydantic cryptography psutil
           # Try to install all dependencies, fallback to essential ones if needed
           pip install -r requirements.txt || {
-            echo "Full requirements installation failed, installing essential packages..."
-            pip install flask fastapi pydantic cryptography psutil pytest pytest-cov
+            echo "Full requirements installation failed, installing remaining essential packages..."
+            pip install flask fastapi bcrypt paramiko sqlalchemy redis prometheus-client
             pip install crewai>=0.130.0 || pip install crewai>=0.28.8 || echo "CrewAI installation failed, continuing without it"
           }
 
@@ -90,10 +92,12 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install pytest pytest-cov pytest-xdist pytest-mock
+          # Install essential dependencies first
+          pip install jsonschema pyyaml python-dotenv pydantic cryptography psutil
           # Try to install all dependencies, fallback to essential ones if needed
           pip install -r requirements.txt || {
-            echo "Full requirements installation failed, installing essential packages..."
-            pip install flask fastapi pydantic cryptography psutil pytest pytest-cov pytest-xdist pytest-mock
+            echo "Full requirements installation failed, installing remaining essential packages..."
+            pip install flask fastapi bcrypt paramiko sqlalchemy redis prometheus-client
             pip install crewai>=0.130.0 || pip install crewai>=0.28.8 || echo "CrewAI installation failed, continuing without it"
           }
 
@@ -166,10 +170,12 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install pytest pytest-cov
+          # Install essential dependencies first
+          pip install jsonschema pyyaml python-dotenv pydantic cryptography psutil
           # Try to install all dependencies, fallback to essential ones if needed
           pip install -r requirements.txt || {
-            echo "Full requirements installation failed, installing essential packages..."
-            pip install flask fastapi pydantic cryptography psutil pytest pytest-cov
+            echo "Full requirements installation failed, installing remaining essential packages..."
+            pip install flask fastapi bcrypt paramiko sqlalchemy redis prometheus-client
             pip install crewai>=0.130.0 || pip install crewai>=0.28.8 || echo "CrewAI installation failed, continuing without it"
           }
 
