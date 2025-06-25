@@ -7,7 +7,6 @@ Automated backup and recovery system.
 import os
 import shutil
 import tarfile
-import gzip
 import json
 import time
 import threading
