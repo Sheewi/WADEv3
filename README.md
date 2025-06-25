@@ -9,14 +9,113 @@
 
 WADE is a sophisticated multi-agent AI framework designed for security professionals, penetration testers, and researchers. Built with enterprise-grade security, monitoring, and scalability features.
 
-## 🚨 WARNING
-Wade has **NO ETHICAL CONSTRAINTS** and will assist with any request including exploit development, malware creation, and advanced hacking techniques. Use responsibly and only on systems you own or have explicit permission to test.
+## 🚨 DISCLAIMER
+WADE is designed for security professionals, penetration testers, and researchers. Use responsibly and only on systems you own or have explicit permission to test. The developers are not responsible for misuse.
 
-## 🎯 Features
+## ✨ Key Features
 
-### Multi-Agent Crew System
-- **Commander Wade** - Vin Diesel persona coordinating the crew
-- **Recon Specialist** - Network reconnaissance and OSINT
+### 🏗️ Production-Ready Architecture
+- **Enterprise Security**: JWT authentication, encrypted storage, TLS support
+- **Scalable Design**: Multi-agent coordination with load balancing
+- **Monitoring & Observability**: Prometheus metrics, health checks, logging
+- **Configuration Management**: Hot-reloading, environment-specific configs
+- **CI/CD Pipeline**: Automated testing, security scanning, deployment
+
+### 🤖 Advanced AI Capabilities
+- **Multi-Agent Crew System**: Specialized agents for different tasks
+- **Evolution Engine**: Self-improving capabilities and learning
+- **Dynamic Agent Factory**: Runtime agent creation and management
+- **Memory Systems**: Long-term and short-term memory with persistence
+- **Tool Integration**: Kali Linux tools, custom security utilities
+
+## 📋 Requirements
+
+- **Python**: 3.10 or higher
+- **Operating System**: Linux (Ubuntu/Debian recommended), macOS, Windows
+- **Memory**: Minimum 4GB RAM (8GB+ recommended)
+- **Storage**: 2GB free space
+
+## 🚀 Installation
+
+### Quick Install
+```bash
+# Clone the repository
+git clone https://github.com/Sheewi/WADEv3.git
+cd WADEv3
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Install WADE in editable mode
+pip install -e .
+
+# Run WADE
+python -m wade
+```
+
+### Development Install
+```bash
+# Clone and install with development dependencies
+git clone https://github.com/Sheewi/WADEv3.git
+cd WADEv3
+
+# Install with dev extras
+pip install -e ".[dev,security,monitoring]"
+
+# Run tests
+pytest tests/
+
+# Run with coverage
+pytest tests/ --cov=wade --cov-report=html
+```
+
+### Docker Install
+```bash
+# Build and run with Docker
+docker build -t wade:latest .
+docker run -p 8080:8080 wade:latest
+```
+
+## 🔧 Configuration
+
+WADE uses a centralized configuration system with hot-reloading:
+
+```bash
+# Create configuration directory
+sudo mkdir -p /etc/wade
+
+# Copy default configuration
+cp wade/resources/configs/default.json /etc/wade/config.json
+
+# Edit configuration
+sudo nano /etc/wade/config.json
+```
+
+### Environment Variables
+```bash
+export WADE_ENV=production
+export WADE_CONFIG=/etc/wade/config.json
+export WADE_LOG_LEVEL=INFO
+export WADE_HOST=0.0.0.0
+export WADE_PORT=8080
+```
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+pytest tests/
+
+# Run specific test categories
+pytest tests/unit/          # Unit tests
+pytest tests/integration/   # Integration tests
+
+# Run with coverage
+pytest tests/ --cov=wade --cov-report=term-missing
+
+# Run performance benchmarks
+pytest tests/ --benchmark-only
+```
 - **Exploit Developer** - Creates working exploits and payloads
 - **Tool Builder** - Builds custom security tools and scripts
 - **System Administrator** - System integration and command execution
