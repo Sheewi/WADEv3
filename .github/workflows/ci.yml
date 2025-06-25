@@ -44,7 +44,7 @@ jobs:
           # Try to install all dependencies, fallback to essential ones if needed
           pip install -r requirements.txt || {
             echo "Full requirements installation failed, installing remaining essential packages..."
-            pip install flask fastapi bcrypt paramiko sqlalchemy redis prometheus-client
+            pip install flask fastapi bcrypt paramiko sqlalchemy redis prometheus-client pyjwt
             pip install crewai>=0.130.0 || pip install crewai>=0.28.8 || echo "CrewAI installation failed, continuing without it"
           }
 
@@ -99,7 +99,7 @@ jobs:
           # Try to install all dependencies, fallback to essential ones if needed
           pip install -r requirements.txt || {
             echo "Full requirements installation failed, installing remaining essential packages..."
-            pip install flask fastapi bcrypt paramiko sqlalchemy redis prometheus-client
+            pip install flask fastapi bcrypt paramiko sqlalchemy redis prometheus-client pyjwt
             pip install crewai>=0.130.0 || pip install crewai>=0.28.8 || echo "CrewAI installation failed, continuing without it"
           }
 
@@ -177,7 +177,7 @@ jobs:
           # Try to install all dependencies, fallback to essential ones if needed
           pip install -r requirements.txt || {
             echo "Full requirements installation failed, installing remaining essential packages..."
-            pip install flask fastapi bcrypt paramiko sqlalchemy redis prometheus-client
+            pip install flask fastapi bcrypt paramiko sqlalchemy redis prometheus-client pyjwt
             pip install crewai>=0.130.0 || pip install crewai>=0.28.8 || echo "CrewAI installation failed, continuing without it"
           }
 
